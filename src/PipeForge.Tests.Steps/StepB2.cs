@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace PipeForge.Tests.Steps;
 
-[PipelineStep(3, true, "2")]
+[PipelineStep(3, "2")]
 public class StepB2 : PipelineStep<StepContext>
 {
     public StepB2()
