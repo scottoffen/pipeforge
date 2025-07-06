@@ -55,7 +55,7 @@ public class DiagnosticTests
         using var allListenerSubscription = DiagnosticListener.AllListeners.Subscribe(
             new FilteringListener(expectedListenerName,
                 (name, payload) => events.Add((name, payload)),
-                (name, _, _) => name == "PipelineStep.Start" || name == "PipelineStep.Stop"));
+                (name, _, _) => name == "PipelineStep" || name == "PipelineStep.Start" || name == "PipelineStep.Stop"));
 
         var runner = new PipelineRunner<TestContext>(
             new[] { new Lazy<IPipelineStep<TestContext>>(() => new TestStep()) },
@@ -80,7 +80,7 @@ public class DiagnosticTests
         using var allListenerSubscription = DiagnosticListener.AllListeners.Subscribe(
             new FilteringListener(expectedListenerName,
                 (name, payload) => events.Add((name, payload)),
-                (name, _, _) => name == "PipelineStep.Start" || name == "PipelineStep.Stop"));
+                (name, _, _) => name == "PipelineStep" || name == "PipelineStep.Start" || name == "PipelineStep.Stop"));
 
         var runner = new PipelineRunner<TestContext>(
             new[] { new Lazy<IPipelineStep<TestContext>>(() => new ShortCircuitStep()) },
