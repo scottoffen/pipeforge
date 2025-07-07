@@ -7,7 +7,7 @@ on:
         - main
     paths:
       - 'docs/**'
-      - '.github/workflows/deploy.yml'
+      - '.github/workflows/deploy-docs.yml'
 
 permissions:
   contents: read
@@ -40,7 +40,7 @@ jobs:
         run: npm run build
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./docs/build
 
@@ -50,8 +50,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
+    
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
