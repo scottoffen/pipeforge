@@ -42,7 +42,7 @@ public class SampleContext
 
     public override string ToString()
     {
-        return string.Join(",", _steps);
+        return string.Join("", _steps);
     }
 }
 ```
@@ -83,7 +83,7 @@ public class PunctuationStep : PipelineStep<SampleContext>
 
 ### Use Dependency Injection
 
-The extension method will discover and register all steps for the given `T` context, as well as register an instance of `IPipelineRunner<T>` that can be used injected into services.
+The extension method will discover and register all steps for the given `T` context, as well as register an instance of `IPipelineRunner<T>` that can be injected into services.
 
 ```csharp
 services.AddPipelineFor<SampleContext>();
@@ -98,7 +98,7 @@ public class SampleService
 {
     private readonly IPipelineRunner<SampleContext> _pipelineRunner;
 
-    public SampleService(IPipelineRunner<T> pipelineRunner)
+    public SampleService(IPipelineRunner<SampleContext> pipelineRunner)
     {
         _pipelineRunner = pipelineRunner;
     }
