@@ -15,10 +15,9 @@ public interface IPipelineRunner<T>
     /// Returns a JSON array describing the steps in the pipeline
     /// </summary>
     string Describe();
-#if !NETSTANDARD2_0
+
     /// <summary>
     /// Returns the JSON schema representing the structure of the pipeline step metadata
     /// </summary>
     string DescribeSchema();
-#endif
 }

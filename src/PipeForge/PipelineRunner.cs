@@ -1,10 +1,6 @@
 using System.Diagnostics;
-#if !NETSTANDARD2_0
-using System.Text.Json;
-using System.Text.Json.Serialization;
-#else
-using Newtonsoft.Json;
-#endif
+using PipeForge.Adapters;
+
 using Microsoft.Extensions.Logging;
 
 namespace PipeForge;
@@ -16,14 +12,8 @@ namespace PipeForge;
 public class PipelineRunner<T> : IPipelineRunner<T>
 {
     private static readonly string ActivityName = "PipelineStep";
+    private static readonly IJsonSerializer _jsonSerializer = JsonSerializerFactory.Create();
 
-#if !NETSTANDARD2_0
-    private static readonly JsonSerializerOptions _options = new()
-    {
-        WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-#endif
     private readonly IEnumerable<Lazy<IPipelineStep<T>>> _lazySteps;
     private readonly ILogger? _logger;
 
@@ -51,14 +41,9 @@ public class PipelineRunner<T> : IPipelineRunner<T>
                 step.MayShortCircuit,
                 step.ShortCircuitCondition
             });
-#if !NETSTANDARD2_0
-        return JsonSerializer.Serialize(steps, _options);
-#else
-        return JsonConvert.SerializeObject(steps, Formatting.Indented);
-#endif
-    }
 
-#if !NETSTANDARD2_0
+        return _jsonSerializer.Serialize(steps);
+    }
 
     public string DescribeSchema()
     {
@@ -78,9 +63,8 @@ public class PipelineRunner<T> : IPipelineRunner<T>
             ["required"] = new[] { "Order", "Name", "MayShortCircuit" }
         };
 
-        return JsonSerializer.Serialize(schema, _options);
+        return _jsonSerializer.Serialize(schema);
     }
-#endif
 
     public async Task ExecuteAsync(T context, CancellationToken cancellationToken = default)
     {
