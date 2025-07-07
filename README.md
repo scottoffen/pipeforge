@@ -16,7 +16,7 @@ PipeForge is available on [NuGet.org](https://www.nuget.org/packages/PipeForge/)
 
 Pipelines are designed to operate on specific class, referred to as the **context**. Multiple pipeline steps are created in code to operate on that context. Steps are annotated with an attribute indicating the order in which they should be executed. Finally, the pipeline runner is given an instance of the context to run against.
 
-The following example uses dependency injection, and is the recommended approach to using PipeForge. For more advanced scenarios, see the full [documentation]().
+The following example uses dependency injection, and is the recommended approach to using PipeForge. For more advanced scenarios, see the full [documentation](https://scottoffen.github.io/pipeforge).
 
 > [!NOTE]
 > I'm suffixing my context class with the word `Context`, and my steps with the word `Step` for demonstration purposes only.
