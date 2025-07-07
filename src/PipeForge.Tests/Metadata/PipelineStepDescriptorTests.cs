@@ -5,7 +5,7 @@ namespace PipeForge.Tests.Metadata;
 
 public class PipelineStepDescriptorTests
 {
-    [PipelineStep(42, isEnabled: false, environment: "QA")]
+    [PipelineStep(42, "QA")]
     private class AnnotatedStep : IPipelineStep<TestContext>
     {
         public string Name => "Test";
@@ -31,7 +31,6 @@ public class PipelineStepDescriptorTests
 
         descriptor.ImplementationType.ShouldBe(typeof(AnnotatedStep));
         descriptor.Order.ShouldBe(42);
-        descriptor.IsEnabled.ShouldBeFalse();
         descriptor.Environment.ShouldBe("QA");
     }
 

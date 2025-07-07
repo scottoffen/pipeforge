@@ -15,7 +15,7 @@
     <PackageTags>pipeline;flow;middleware;steps;processing;conditional</PackageTags>
     <Version>0.0.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.png</PackageIcon>
+    <!-- <PackageIcon>icon.png</PackageIcon> -->
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="" />
-    <None Include="icon.png" Pack="true" PackagePath="" />
+    <!-- <None Include="icon.png" Pack="true" PackagePath="" /> -->
   </ItemGroup>
 
 </Project>

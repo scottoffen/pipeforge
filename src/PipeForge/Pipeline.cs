@@ -10,7 +10,7 @@ public static class Pipeline
 {
     internal static readonly string NoStepsFoundMessage = "No pipeline steps found for {0} in the specified assemblies.";
     internal static readonly string NumberStepsFoundMessage = "Discovered {0} pipeline steps for {1}.";
-    internal static readonly string StepDiscoveredMessage = "Discovered pipeline step {0} [Order={1}, Env={2}, Enabled={3}]";
+    internal static readonly string StepDiscoveredMessage = "Discovered pipeline step {0} [Order={1}, Env={2}]";
 
     internal static readonly string RunnerAlreadyRegisteredMessage = "Pipeline runner for {0} already registered. Skipping step registration.";
     internal static readonly string StepRegistrationMessage = "Registering pipeline step {0} with {1} lifetime";
@@ -182,9 +182,8 @@ public static class Pipeline
 
         var descriptors = assemblies
             .SelectMany(SafeGetTypes)
-            .Where(t => !t.IsAbstract && !t.IsInterface && stepInterface.IsAssignableFrom(t))
+            .Where(t => !t.IsAbstract && !t.IsInterface && stepInterface.IsAssignableFrom(t) && t.GetCustomAttribute<PipelineStepAttribute>() != null)
             .Select(t => new PipelineStepDescriptor(t))
-            .Where(d => d.IsEnabled)
             .Where(d => d.Environment == null || d.Environment.Equals(environmentName, StringComparison.OrdinalIgnoreCase))
             .OrderBy(d => d.Order)
             .ToList();
@@ -201,8 +200,7 @@ public static class Pipeline
                         StepDiscoveredMessage,
                         descriptor.ImplementationType.FullName ?? descriptor.ImplementationType.Name,
                         descriptor.Order,
-                        descriptor.Environment ?? "(none)",
-                        descriptor.IsEnabled);
+                        descriptor.Environment ?? "(none)");
                 }
             }
             else

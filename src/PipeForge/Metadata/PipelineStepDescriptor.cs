@@ -18,11 +18,6 @@ public sealed class PipelineStepDescriptor
     public int Order { get; }
 
     /// <summary>
-    /// Indicates whether the step is enabled and should be included in the pipeline
-    /// </summary>
-    public bool IsEnabled { get; }
-
-    /// <summary>
     /// The environment in which the step should be included, such as "Production" or "Development"
     /// </summary>
     public string? Environment { get; }
@@ -40,7 +35,6 @@ public sealed class PipelineStepDescriptor
             ?? throw new InvalidOperationException($"Pipeline step '{implementationType.FullName}' must be decorated with [PipelineStep].");
 
         Order = attribute.Order;
-        IsEnabled = attribute.IsEnabled;
         Environment = attribute.Environment;
     }
 }

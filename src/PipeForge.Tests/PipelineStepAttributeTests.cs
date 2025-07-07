@@ -7,19 +7,10 @@ public class PipelineStepAttributeTests
     [Fact]
     public void Constructor_Assigns_Properties_Correctly()
     {
-        var attr = new PipelineStepAttribute(order: 42, isEnabled: false, environment: "Staging");
+        var attr = new PipelineStepAttribute(order: 42, environment: "Staging");
 
         attr.Order.ShouldBe(42);
-        attr.IsEnabled.ShouldBeFalse();
         attr.Environment.ShouldBe("Staging");
-    }
-
-    [Fact]
-    public void Defaults_IsEnabled_To_True()
-    {
-        var attr = new PipelineStepAttribute(order: 1);
-
-        attr.IsEnabled.ShouldBeTrue();
     }
 
     [Fact]
