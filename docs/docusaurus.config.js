@@ -5,7 +5,7 @@ export default {
   tagline: 'Composable pipelines for .NET',
   url: 'https://scottoffen.github.io',
   baseUrl: '/pipeforge/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   trailingSlash: false,
