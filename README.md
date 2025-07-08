@@ -1,5 +1,6 @@
 # PipeForge
 
+[![docs](https://img.shields.io/badge/docs-pipeforge.github.io-blue)](https://scottoffen.github.io/pipeforge)
 [![NuGet](https://img.shields.io/nuget/v/PipeForge)](https://www.nuget.org/packages/PipeForge/)
 [![MIT](https://img.shields.io/github/license/scottoffen/pipeforge)](./LICENSE)
 [![Target](https://img.shields.io/badge/netstandard-2.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/net-standard)

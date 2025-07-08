@@ -21,7 +21,7 @@
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryUrl>https://github.com/scottoffen/pipeforge</RepositoryUrl>
-    <PackageProjectUrl>https://scottoffen.github.io/pipeforge/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/scottoffen/pipeforge</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
