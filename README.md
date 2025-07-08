@@ -1,11 +1,11 @@
 # PipeForge
 
-[![docs](https://img.shields.io/badge/docs-pipeforge.github.io-blue)](https://scottoffen.github.io/pipeforge)
+[![docs](https://img.shields.io/badge/docs-github.io-blue)](https://scottoffen.github.io/pipeforge)
 [![NuGet](https://img.shields.io/nuget/v/PipeForge)](https://www.nuget.org/packages/PipeForge/)
-[![MIT](https://img.shields.io/github/license/scottoffen/pipeforge)](./LICENSE)
-[![Target](https://img.shields.io/badge/netstandard-2.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/net-standard)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
-
+[![MIT](https://img.shields.io/github/license/scottoffen/pipeforge?color=blue)](./LICENSE)
+[![Target1](https://img.shields.io/badge/netstandard-2.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/frameworks)
+[![Target1](https://img.shields.io/badge/dotnet-5.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/frameworks)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-blue.svg)](code_of_conduct.md)
 
 PipeForge is a lightweight, composable pipeline framework for .NET. It makes step-based processing simple, discoverable, and testable. Inspired by middleware pipelines and modern dependency injection patterns, PipeForge gives you structured control over sequential logic flows - without the ceremony.
 
