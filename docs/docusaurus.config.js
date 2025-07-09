@@ -50,7 +50,7 @@ export default {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
         },
@@ -87,8 +87,16 @@ export default {
           ],
         },
         {
-          title: 'More',
+          title: 'Project',
           items: [
+            {
+              label: 'Contributing Guide',
+              href: 'https://github.com/scottoffen/pipeforge/blob/main/CONTRIBUTING.md',
+            },
+            {
+              label: 'Code of Conduct',
+              href: 'https://github.com/scottoffen/pipeforge/blob/main/CODE_OF_CONDUCT.md',
+            },
             {
               label: 'GitHub',
               href: 'https://github.com/scottoffen/pipeforge',
@@ -102,5 +110,7 @@ export default {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
+    titleDelimiter: '|',
+    titleTemplate: 'PipeForge | %s'
   },
 };

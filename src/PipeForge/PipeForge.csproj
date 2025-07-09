@@ -10,18 +10,18 @@
     <PackageId>PipeForge</PackageId>
     <Authors>Scott Offen</Authors>
     <Copyright>© 2025 - $([System.DateTime]::Now.ToString('yyyy')) $(Authors)</Copyright>
-    <Description>A lightweight processing pipeline for .NET with composable steps, lazy execution,
+    <Description>A lightweight processing pipeline for .NET with composable steps, lazy instantiation,
       short-circuiting, and rich metadata. Ideal for workflows, rules, or conditional logic flows.</Description>
     <PackageTags>pipeline;flow;middleware;steps;processing;conditional</PackageTags>
     <Version>0.0.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <!-- <PackageIcon>icon.png</PackageIcon> -->
+    <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryUrl>https://github.com/scottoffen/pipeforge</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/scottoffen/pipeforge</PackageProjectUrl>
+    <PackageProjectUrl>https://scottoffen.github.io/pipeforge/</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="" />
-    <!-- <None Include="icon.png" Pack="true" PackagePath="" /> -->
+    <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
