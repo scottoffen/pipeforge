@@ -1,47 +1,52 @@
 ---
 sidebar_position: 1
+title: Getting Started
 ---
 
-# Tutorial Intro
+# Welcome to PipeForge
 
-Let's discover **Docusaurus in less than 5 minutes**.
+PipeForge is a lightweight, composable, lazy-instantiation pipeline framework for .NET. It simplifies step-based processing while remaining discoverable and testable. Inspired by middleware pipelines and modern dependency injection patterns, PipeForge gives you structured control over sequential logic flows - without the ceremony.
 
-## Getting Started
+Pipelines operate on a specific class known as the **context**. Each pipeline step is a discrete unit of work, written in code and annotated with metadata indicating its order and (optional) environment. These steps are lazily instantiated and executed in sequence by the pipeline runner.
 
-Get started by **creating a new site**.
+At any point, the pipeline can **short-circuit**, halting execution — and preventing the instantiation of any remaining steps.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Sample Context
 
-### What you'll need
+For the purposes of this documentation, the following sample context will be used.
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+```csharp title="SampleContext.cs"
+public class SampleContext
+{
+    private readonly List<string> _steps = new();
 
-## Generate a new site
+    public void AddStep(string stepName)
+    {
+        if (string.IsNullOrWhiteSpace(stepName))
+        {
+            throw new ArgumentException("Step name cannot be null or whitespace.", nameof(stepName));
+        }
 
-Generate a new Docusaurus site using the **classic template**.
+        _steps.Add(stepName);
+    }
 
-The classic template will automatically be added to your project after you run the command:
+    public int StepCount => _steps.Count;
 
-```bash
-npm init docusaurus@latest my-website classic
+    public override string ToString()
+    {
+        return string.Join(",", _steps);
+    }
+}
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+This context allows us to:
+- Track pipeline progress via AddStep()
+- Print execution history using ToString()
+- Assert how many steps ran using StepCount
+- Simulate errors by passing invalid step names
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+## Installation
 
-## Start your site
+PipeForge is available on [NuGet.org](https://www.nuget.org/packages/PipeForge/) and can be installed using a NuGet package manager or the .NET CLI.
 
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+PipeForge targets `.NET Standard 2.0` for broad compatibility, and also multi-targets `.NET 5.0` to take advantage of modern runtime features where available.

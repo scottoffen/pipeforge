@@ -1,13 +1,12 @@
 # Contributing to PipeForge
 
-PipeForge has received lots of great feedback from the community. We've used this feedback to inform the direction of the project, and we absolutely want to keep hearing from you! **Your involvement makes the project better** by increasing the usability, quality and adoption of the project. Our goal is to be better stewards by being more responsive and transparent. Following the contribution guidelines outlined below will help us to better help you.
+Community feedback is used to inform the direction of the project, and we absolutely want to hear from you! **Your involvement makes the project better** by increasing the usability, quality and adoption of the project. Our goal is to be better stewards by being more responsive and transparent. Following the contribution guidelines outlined below will help us to better help you.
 
 # How To Get Help
 
 A lot of issues that were created in previous versions of PipeForge were not bugs or feature requests, they were questions or discussions - most of which could be (and were) answered by anyone in the community; they're not exclusive to the maintainers. For feedback like this, there are several places where people can get all kinds of help, and we would encourage you to use them first.
 
 - Consult the [official documentation](https://scottoffen.github.io/PipeForge).
-- Take a gander at the [Samples](https://github.com/scottoffen/PipeForge/tree/main/src/Samples) project.
 - Engage in our [community discussions](https://github.com/scottoffen/PipeForge/discussions).
 - Ask your question on [StackOverflow](https://stackoverflow.com) using [#PipeForge](https://stackoverflow.com/questions/tagged/PipeForge?sort=newest).
 
@@ -26,8 +25,6 @@ Regardless of whether you are opening a bug report, asking a question on StackOv
 # Feature Requests
 
 Got an idea on how to make PipeForge better? Start or join a conversation in our [community discussions](https://github.com/scottoffen/PipeForge/discussions) and suggest your change there. **Do not open an issue on GitHub until** you have collected positive feedback about the change. Where it comes to improvements, we want to ensure we are focused on solving problems, not attacking symptoms, while remaining focused on our guiding principles: fast, unopinionated, and minimalist. In a word: simple.
-
-That being said, PipeForge is designed to make it easy to add middleware at different places in the server and request/response pipeline. You can also create your own implementations of the different interfaces and inject them. All told, that makes it easy to take your functionality and put it in a package that can be used by others as an add-on or plugin to the core PipeForge library, rather than in the core library, if that makes more sense.
 
 If it is decided that your idea would be a good inclusion to the core PipeForge project, create a feature request issue based on the outcome of the community discussion.
 
@@ -71,8 +68,8 @@ Changes that are cosmetic in nature and do not add anything substantial to the s
 - It creates a lot of notification noise
 - It pollutes the git history
 
-Sometimes, your editor will completely reformat a file when you save it, making numerous white space changes that, while they don't affect the code, create a lot of noise for the reviewers. If this happens, the PR will not be considered until those white space changes are removed.
+Sometimes, your editor may completely reformat a file when you save it, making numerous white space changes that, while they don't affect the code, create a lot of noise for the reviewers. If this happens, the PR will not be considered until those white space changes are reverted.
 
 # Documentation Changes
 
-Having excellent documentation is crucial to the success of PipeForge. Documentation for PipeForge lives in [docs](). Your contribution of clear, concise and accurate documentation is appreciated.
+Having excellent documentation is crucial to the success of PipeForge. Documentation for PipeForge is written using [Docusaurus](https://docusaurus.io/), lives in [docs folder](./docs/). Your contribution of clear, concise and accurate documentation is appreciated.
