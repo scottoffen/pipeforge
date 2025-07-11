@@ -9,7 +9,7 @@ PipeForge is a lightweight, composable, lazy-instantiation pipeline framework fo
 
 Pipelines operate on a specific class known as the **context**. Each pipeline step is a discrete unit of work, written in code and annotated with metadata indicating its order and (optional) filter. These steps are lazily instantiated and executed in sequence by the pipeline runner.
 
-At any point, the pipeline can **short-circuit**, halting execution — and preventing the instantiation of any remaining steps.
+At any point, the pipeline can **short-circuit**, halting execution - and preventing the instantiation of any remaining steps.
 
 ## Sample Context
 
@@ -40,10 +40,10 @@ public class SampleContext
 ```
 
 This context allows us to:
-- Track pipeline progress via AddStep()
-- Print execution history using ToString()
-- Assert how many steps ran using StepCount
-- Simulate errors by passing invalid step names
+- Track pipeline progress via `AddStep()`
+- Print step execution history using `ToString()`
+- Assert how many steps ran using `StepCount`
+- Simulate errors by passing null or empty step names
 
 ## Installation
 

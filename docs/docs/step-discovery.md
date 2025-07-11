@@ -9,7 +9,7 @@ In order to ensure that pipeline steps are both registered correctly and registe
 
 ## Using the Extension Method
 
-When the extension method is called using only the type parameter `T`, it will scan all assemblies in the AppDomain for classes that implement `IPipelineStep<T>` and have the `PipelineStep` attribute that does not specify a filter. It will then register all matching classes in the dependency injection container - along with an instance of `IPipelineRunner<T>` - with a transient service lifetime.
+When the extension method is called using only the type parameter `T`, it will scan all assemblies in the `AppDomain` for classes that implement `IPipelineStep<T>` and have a `PipelineStep` attribute that does not specify a filter. It will then register all matching classes in the dependency injection container - along with an instance of `IPipelineRunner<T>` - with a transient service lifetime.
 
 ```csharp
 services.AddPipelineFor<SampleContext>();
@@ -21,10 +21,10 @@ The extension method takes optional parameters to change the service lifetime or
 // Add services using a scoped service lifetime
 services.AddPipelineFor<SampleContext>(ServiceLifetime.Scoped);
 
-// Include steps explicitly marked with the "Development" filter
+// Include steps with the "Development" filter
 service.AddPipelineFor<SampleContext>("Development");
 
-// Use a scoped lifetime and include marked with the "Development" filter
+// Use a scoped lifetime and include steps with the "Development" filter
 service.AddPipelineFor<SampleContext>(ServiceLifetime.Scoped, "Development");
 ```
 
@@ -43,7 +43,11 @@ public class ManuallyRegisterStep : PipelineStep<StepContext>
 services.AddPipelineStep<ManuallyRegisterStep>(ServiceLifetime.Scoped);
 ```
 
-Using this extension method will NOT register a corresponding instance of `IPipelineRunner<T>`.
+:::tip Note
+
+Using this extension method will **not** register a corresponding instance of `IPipelineRunner<T>`.
+
+:::
 
 ## Conclusion
 

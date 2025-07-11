@@ -40,6 +40,14 @@ Example output:
 ]
 ```
 
+:::warning Warning
+
+The `Order` value in the JSON output represents the execution order of the steps. This value is assigned based on the order in which the steps will be executed, and it may differ from the `Order` specified in each step's `PipelineStep` attribute.
+
+For example, if you have only two steps with `PipelineStep(Order = 3)` and `PipelineStep(Order = 4)`, the JSON output will show `Order` values of `0` and `1`, respectively - reflecting their relative execution sequence, not their original attribute values.
+
+:::
+
 ## Instantiation Behavior
 
 Calling `Describe()` **will instantiate all steps** in the pipeline by accessing their `Lazy<T>` wrappers. This may result in constructor injection or other side effects associated with instantiating the step class. Use this method only when you are prepared for that overhead.
