@@ -3,6 +3,7 @@ using PipeForge.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PipeForge;
 
@@ -27,6 +28,7 @@ public static class Pipeline
     /// <typeparam name="TContext"></typeparam>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         ILogger? logger = null)
         where TContext : class
@@ -46,6 +48,7 @@ public static class Pipeline
     /// <param name="environmentName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         string? environmentName,
         ILogger? logger = null)
@@ -66,6 +69,7 @@ public static class Pipeline
     /// <param name="typeMarker"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Type typeMarker,
         ILogger? logger = null)
@@ -87,6 +91,7 @@ public static class Pipeline
     /// <param name="environmentName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Type typeMarker,
         string? environmentName,
@@ -108,6 +113,7 @@ public static class Pipeline
     /// <param name="assembly"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Assembly assembly,
         ILogger? logger = null)
@@ -129,6 +135,7 @@ public static class Pipeline
     /// <param name="environmentName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Assembly assembly,
         string? environmentName,
@@ -150,6 +157,7 @@ public static class Pipeline
     /// <param name="assemblies"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         IEnumerable<Assembly> assemblies,
         ILogger? logger = null)
@@ -181,7 +189,7 @@ public static class Pipeline
         var stepInterface = typeof(IPipelineStep<TContext>);
 
         var descriptors = assemblies
-            .SelectMany(SafeGetTypes)
+            .SelectMany(a => SafeGetTypes(() => a.GetTypes()))
             .Where(t => !t.IsAbstract && !t.IsInterface && stepInterface.IsAssignableFrom(t) && t.GetCustomAttribute<PipelineStepAttribute>() != null)
             .Select(t => new PipelineStepDescriptor(t))
             .Where(d => d.Environment == null || d.Environment.Equals(environmentName, StringComparison.OrdinalIgnoreCase))
@@ -223,6 +231,7 @@ public static class Pipeline
     /// <param name="services"></param>
     /// <param name="descriptors"></param>
     /// <param name="logger"></param>
+    [ExcludeFromCodeCoverage]
     public static void Register<TContext>(
         IServiceCollection services,
         IEnumerable<PipelineStepDescriptor> descriptors,
@@ -319,11 +328,11 @@ public static class Pipeline
     /// <summary>
     /// Safely retrieves all loadable types from the specified assembly, skipping those that cannot be loaded.
     /// </summary>
-    private static IEnumerable<Type> SafeGetTypes(Assembly assembly)
+    internal static IEnumerable<Type> SafeGetTypes(Func<Type[]> getTypes)
     {
         try
         {
-            return assembly.GetTypes();
+            return getTypes();
         }
         catch (ReflectionTypeLoadException ex)
         {
