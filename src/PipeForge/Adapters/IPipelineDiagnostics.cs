@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace PipeForge.Adapters;
 
 internal interface IPipelineDiagnostics<T>
@@ -45,6 +47,7 @@ internal static class PipelineDiagnosticsFactory
     }
 }
 
+[ExcludeFromCodeCoverage]
 internal sealed class NullScope : IPipelineDiagnosticsScope
 {
     public static readonly NullScope Instance = new();

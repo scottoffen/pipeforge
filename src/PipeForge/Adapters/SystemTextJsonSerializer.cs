@@ -1,9 +1,11 @@
 #if !NETSTANDARD2_0
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace PipeForge.Adapters;
 
+[ExcludeFromCodeCoverage]
 internal class SystemTextJsonSerializer : IJsonSerializer
 {
     private static readonly JsonSerializerOptions _options = new()
