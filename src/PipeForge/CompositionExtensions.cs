@@ -65,9 +65,9 @@ public static class CompositionExtensions
     /// Discovers and registers all pipeline steps in all assemblies in the AppDomain for the specified context type <typeparamref name="TContext"/> using ServiceLifetime.Transient.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying an filter allows for conditional registration of pipeline steps.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
@@ -83,81 +83,81 @@ public static class CompositionExtensions
     /// Discovers and registers all pipeline steps in all assemblies in the AppDomain for the specified context type <typeparamref name="TContext"/> using ServiceLifetime.Transient.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Transient, environmentName);
+        return services.AddPipelineFor<TContext>(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Transient, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in all assemblies in the AppDomain for the specified context type <typeparamref name="TContext"/> using the specified service lifetime.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         ServiceLifetime lifetime,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(AppDomain.CurrentDomain.GetAssemblies(), lifetime, environmentName);
+        return services.AddPipelineFor<TContext>(AppDomain.CurrentDomain.GetAssemblies(), lifetime, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the assembly containing the marker type for the specified context type <typeparamref name="TContext"/> using ServiceLifetime.Transient.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="markerType"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Type markerType,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(new[] { markerType.Assembly }, ServiceLifetime.Transient, environmentName);
+        return services.AddPipelineFor<TContext>(new[] { markerType.Assembly }, ServiceLifetime.Transient, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the assembly containing the marker type for the specified context type <typeparamref name="TContext"/> using the specified service lifetime.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="markerType"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
@@ -165,47 +165,47 @@ public static class CompositionExtensions
         this IServiceCollection services,
         Type markerType,
         ServiceLifetime lifetime,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(new[] { markerType.Assembly }, lifetime, environmentName);
+        return services.AddPipelineFor<TContext>(new[] { markerType.Assembly }, lifetime, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the specified assembly for the specified context type <typeparamref name="TContext"/> using ServiceLifetime.Transient.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="assembly"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Assembly assembly,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(new[] { assembly }, ServiceLifetime.Transient, environmentName);
+        return services.AddPipelineFor<TContext>(new[] { assembly }, ServiceLifetime.Transient, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the specified assembly for the specified context type <typeparamref name="TContext"/> using the specified service lifetime.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="assembly"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
@@ -213,60 +213,60 @@ public static class CompositionExtensions
         this IServiceCollection services,
         Assembly assembly,
         ServiceLifetime lifetime,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(new[] { assembly }, lifetime, environmentName);
+        return services.AddPipelineFor<TContext>(new[] { assembly }, lifetime, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the specified assemblies for the specified context type <typeparamref name="TContext"/> using ServiceLifetime.Transient.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="assemblies"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
-        return services.AddPipelineFor<TContext>(assemblies, ServiceLifetime.Transient, environmentName);
+        return services.AddPipelineFor<TContext>(assemblies, ServiceLifetime.Transient, filterName);
     }
 
     /// <summary>
     /// Discovers and registers all pipeline steps in the specified assemblies for the specified context type <typeparamref name="TContext"/> using the specified service lifetime.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional registration of pipeline steps based on the environment.
-    /// Steps without an environment name will always be registered.
-    /// Steps with an environment name will only be registered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional registration of pipeline steps based on the filter.
+    /// Steps without a filter will always be registered.
+    /// Steps with a filter will only be registered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="assemblies"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
         ServiceLifetime lifetime,
-        string? environmentName)
+        string? filterName)
         where TContext : class
     {
         services.GetLoggerFactory();
         var logger = _loggerFactory?.CreateLogger(nameof(Pipeline));
 
-        var descriptors = Pipeline.Discover<TContext>(assemblies, environmentName, logger);
+        var descriptors = Pipeline.Discover<TContext>(assemblies, filterName, logger);
         Pipeline.Register<TContext>(services, descriptors, lifetime, logger);
 
         return services;

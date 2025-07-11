@@ -7,7 +7,7 @@ title: Getting Started
 
 PipeForge is a lightweight, composable, lazy-instantiation pipeline framework for .NET. It simplifies step-based processing while remaining discoverable and testable. Inspired by middleware pipelines and modern dependency injection patterns, PipeForge gives you structured control over sequential logic flows - without the ceremony.
 
-Pipelines operate on a specific class known as the **context**. Each pipeline step is a discrete unit of work, written in code and annotated with metadata indicating its order and (optional) environment. These steps are lazily instantiated and executed in sequence by the pipeline runner.
+Pipelines operate on a specific class known as the **context**. Each pipeline step is a discrete unit of work, written in code and annotated with metadata indicating its order and (optional) filter. These steps are lazily instantiated and executed in sequence by the pipeline runner.
 
 At any point, the pipeline can **short-circuit**, halting execution — and preventing the instantiation of any remaining steps.
 

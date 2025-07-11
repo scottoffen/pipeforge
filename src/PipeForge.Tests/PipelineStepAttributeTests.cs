@@ -7,18 +7,18 @@ public class PipelineStepAttributeTests
     [Fact]
     public void Constructor_Assigns_Properties_Correctly()
     {
-        var attr = new PipelineStepAttribute(order: 42, environment: "Staging");
+        var attr = new PipelineStepAttribute(order: 42, filter: "Staging");
 
         attr.Order.ShouldBe(42);
-        attr.Environment.ShouldBe("Staging");
+        attr.Filter.ShouldBe("Staging");
     }
 
     [Fact]
-    public void Defaults_Environment_To_Null()
+    public void Defaults_Filter_To_Null()
     {
         var attr = new PipelineStepAttribute(order: 1);
 
-        attr.Environment.ShouldBeNull();
+        attr.Filter.ShouldBeNull();
     }
 
     [Fact]

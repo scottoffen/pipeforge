@@ -9,22 +9,22 @@ In order to ensure that pipeline steps are both registered correctly and registe
 
 ## Using the Extension Method
 
-When the extension method is called using only the type parameter `T`, it will scan all assemblies in the AppDomain for classes that implement `IPipelineStep<T>` and have the `PipelineStep` attribute that does not specify an environment. It will then register all matching classes in the dependency injection container - along with an instance of `IPipelineRunner<T>` - with a transient service lifetime.
+When the extension method is called using only the type parameter `T`, it will scan all assemblies in the AppDomain for classes that implement `IPipelineStep<T>` and have the `PipelineStep` attribute that does not specify a filter. It will then register all matching classes in the dependency injection container - along with an instance of `IPipelineRunner<T>` - with a transient service lifetime.
 
 ```csharp
 services.AddPipelineFor<SampleContext>();
 ```
 
-The extension method takes optional parameters to change the service lifetime or to include steps for a particular environment.
+The extension method takes optional parameters to change the service lifetime or to include steps for a particular filter.
 
 ```csharp
 // Add services using a scoped service lifetime
 services.AddPipelineFor<SampleContext>(ServiceLifetime.Scoped);
 
-// Include steps explicitly marked for the "Development" environment
+// Include steps explicitly marked with the "Development" filter
 service.AddPipelineFor<SampleContext>("Development");
 
-// Use a scoped lifetime and include environment-specific steps
+// Use a scoped lifetime and include marked with the "Development" filter
 service.AddPipelineFor<SampleContext>(ServiceLifetime.Scoped, "Development");
 ```
 
