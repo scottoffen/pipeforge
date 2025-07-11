@@ -18,6 +18,34 @@ public static class Pipeline
     internal static readonly string RunnerRegistrationMessage = "Registering pipeline runner {0} with {1} lifetime";
 
     /// <summary>
+    /// Creates a new instance of <see cref="PipelineBuilder{T}"/> for the specified context type.
+    /// </summary>
+    /// <remarks>
+    /// This method is used to start building a pipeline for a specific type.
+    /// It allows for fluent configuration of pipeline steps.
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static PipelineBuilder<T> CreateFor<T>() where T : class
+    {
+        return new PipelineBuilder<T>();
+    }
+
+    /// <summary>
+    /// Creates a new instance of <see cref="PipelineBuilder{T}"/> for the specified context type.
+    /// </summary>
+    /// <remarks>
+    /// This method is used to start building a pipeline for a specific type.
+    /// It allows for fluent configuration of pipeline steps.
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static PipelineBuilder<T> CreateFor<T>(ILoggerFactory? loggerFactory) where T : class
+    {
+        return new PipelineBuilder<T>(loggerFactory);
+    }
+
+    /// <summary>
     /// Discovers pipeline steps for a specific context type from all assemblies in the current AppDomain.
     /// </summary>
     /// <remarks>
@@ -29,7 +57,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         ILogger? logger = null)
         where TContext : class
     {
@@ -49,7 +77,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         string? environmentName,
         ILogger? logger = null)
         where TContext : class
@@ -70,7 +98,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Type typeMarker,
         ILogger? logger = null)
         where TContext : class
@@ -92,7 +120,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Type typeMarker,
         string? environmentName,
         ILogger? logger = null)
@@ -114,7 +142,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Assembly assembly,
         ILogger? logger = null)
         where TContext : class
@@ -136,7 +164,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Assembly assembly,
         string? environmentName,
         ILogger? logger = null)
@@ -158,7 +186,7 @@ public static class Pipeline
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         IEnumerable<Assembly> assemblies,
         ILogger? logger = null)
         where TContext : class
@@ -179,7 +207,7 @@ public static class Pipeline
     /// <param name="environmentName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
+    internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         IEnumerable<Assembly> assemblies,
         string? environmentName,
         ILogger? logger = null)
@@ -232,7 +260,7 @@ public static class Pipeline
     /// <param name="descriptors"></param>
     /// <param name="logger"></param>
     [ExcludeFromCodeCoverage]
-    public static void Register<TContext>(
+    internal static void Register<TContext>(
         IServiceCollection services,
         IEnumerable<PipelineStepDescriptor> descriptors,
         ILogger? logger = null)
@@ -249,7 +277,7 @@ public static class Pipeline
     /// <param name="descriptors"></param>
     /// <param name="lifetime"></param>
     /// <param name="logger"></param>
-    public static void Register<TContext>(
+    internal static void Register<TContext>(
         IServiceCollection services,
         IEnumerable<PipelineStepDescriptor> descriptors,
         ServiceLifetime lifetime,
