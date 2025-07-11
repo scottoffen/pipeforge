@@ -127,5 +127,35 @@ public class PipelineTests
         logger.ShouldContainMessage(string.Format(Pipeline.RunnerRegistrationMessage, runnerTypeName, lifetime), LogLevel.Debug);
     }
 
+    [Fact]
+    public void SafeGetTypes_ReturnsTypes_WhenNoException()
+    {
+        var expected = new[] { typeof(string), typeof(int) };
+
+        var result = Pipeline.SafeGetTypes(() => expected);
+
+        result.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void SafeGetTypes_ReturnsNonNullTypes_WhenReflectionTypeLoadException()
+    {
+        var expected = new[] { typeof(string), null, typeof(int) };
+
+        var ex = new ReflectionTypeLoadException(expected, new Exception[0]);
+
+        var result = Pipeline.SafeGetTypes(() => throw ex);
+
+        result.ShouldBe(new[] { typeof(string), typeof(int) });
+    }
+
+    [Fact]
+    public void SafeGetTypes_ReturnsEmpty_WhenUnknownException()
+    {
+        var result = Pipeline.SafeGetTypes(() => throw new InvalidOperationException());
+
+        result.ShouldBeEmpty();
+    }
+
     private class NotAContextWithSteps { }
 }

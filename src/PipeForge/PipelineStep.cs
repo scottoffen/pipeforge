@@ -1,6 +1,9 @@
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace PipeForge;
 
+[ExcludeFromCodeCoverage]
 public abstract class PipelineStep<T> : IPipelineStep<T>
 {
     public string? Description { get; set; } = null;

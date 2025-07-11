@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -71,6 +72,7 @@ public static class CompositionExtensions
     /// <typeparam name="TContext"></typeparam>
     /// <param name="services"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(this IServiceCollection services)
         where TContext : class
     {
@@ -89,6 +91,7 @@ public static class CompositionExtensions
     /// <param name="services"></param>
     /// <param name="environmentName"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         string? environmentName)
@@ -110,6 +113,7 @@ public static class CompositionExtensions
     /// <param name="environmentName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         ServiceLifetime lifetime,
@@ -132,6 +136,7 @@ public static class CompositionExtensions
     /// <param name="markerType"></param>
     /// <param name="environmentName"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Type markerType,
@@ -155,6 +160,7 @@ public static class CompositionExtensions
     /// <param name="environmentName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Type markerType,
@@ -178,6 +184,7 @@ public static class CompositionExtensions
     /// <param name="assembly"></param>
     /// <param name="environmentName"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Assembly assembly,
@@ -201,6 +208,7 @@ public static class CompositionExtensions
     /// <param name="environmentName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         Assembly assembly,
@@ -224,6 +232,7 @@ public static class CompositionExtensions
     /// <param name="assemblies"></param>
     /// <param name="environmentName"></param>
     /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     public static IServiceCollection AddPipelineFor<TContext>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
