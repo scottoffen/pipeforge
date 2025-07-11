@@ -131,6 +131,16 @@ We welcome contributions from the community! In order to ensure the best experie
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/scottoffen/pipeforge/releases).
 
+## Test Coverage
+
+You can generate and open a test coverage report by running the following command in the project root:
+
+```bash
+pwsh ./test-coverage.ps1
+```
+
+> You must have [Powershell](https://learn.microsoft.com/en-us/powershell/) installed to run this command.
+
 ## License
 
 PipeForge is licensed under the [MIT](./LICENSE) license.
