@@ -21,7 +21,7 @@ The optional metadata properties do not impact step registration or execution, b
 
 :::tip[Tip]
 
-Because pipeline steps are plain classes, you can inject dependencies through their constructors - enabling full integration with your existing services, business logic, and data access layers.
+Because pipeline steps are plain classes, you can **inject dependencies** through their constructors - enabling full integration with your existing services, business logic, and data access layers.
 
 :::
 
@@ -73,7 +73,7 @@ public class ShortCircuitStep : PipelineStep<StepContext>
 
 ## Adding the `[PipelineStep]` Attribute
 
-To be discoverable, each pipeline step must be decorated with the [PipelineStep] attribute. This attribute defines the order in which pipeline steps should execute.
+To be discoverable, each pipeline step must be decorated with the `[PipelineStep]` attribute. This attribute defines the order in which pipeline steps should execute.
 
 ```csharp title="Step1.cs"
 [PipelineStep(1)]
@@ -85,14 +85,14 @@ public class Step1 : PipelineStep<SampleContext>
 
 :::tip[Tip]
 
-- Multiple steps that are not using the same context will not be impacted by using the same order value.
-- Multiple steps that are using the same context and have the same order value will be ordered arbitrarily.
+- Multiple steps that are **not** using the same context will not be impacted by using the same order value.
+- Multiple steps that **are** using the same context and have the same order value will be ordered arbitrarily.
 
 :::
 
 ### Adding a Step Filter
 
-You can limit when a step will be registered in by adding the `Filter` parameter to the `PipelineStep` attribute. This is useful to add steps that will only be registered when the `Development` filter is applied.
+You can limit when a step will be registered by adding the `Filter` parameter to the `PipelineStep` attribute. This is useful to ensure that some steps will only be registered when the filter is applied during step discovery and registration.
 
 ```csharp title="Step2.cs"
 [PipelineStep(2, "Development")]
@@ -104,8 +104,8 @@ public class Step2 : PipelineStep<SampleContext>
 
 :::danger[Caution]
 
-- Steps that do NOT have an `Filter` parameter in the attribute will always be registered during the step discovery process. 
-- Steps that DO have an `Filter` parameter in the attribute will only be registered if the same value is passed to the [registration extension method](./step-discovery.md).
+- Steps **without** a `Filter` parameter will always be registered during the step discovery and registration process. 
+- Steps **with** `Filter` parameter will only be registered if the same value is passed to the [registration extension method](./step-discovery.md).
 
 :::
 

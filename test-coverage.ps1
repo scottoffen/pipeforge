@@ -30,5 +30,5 @@ if ($IsWindows) {
 } elseif ($IsLinux) {
     xdg-open $indexPath
 } else {
-    Write-Warning "Platform not detected — open coverage-report/index.html manually"
+    Write-Warning "Platform not detected - open coverage-report/index.html manually"
 }

@@ -33,7 +33,7 @@ public class StepB : PipelineStep<StepContext>
 }
 
 [PipelineStep(3)]
-public class StepA : PipelineStep<StepContext>
+public class StepC : PipelineStep<StepContext>
 {
     public override async Task InvokeAsync(StepContext context, PipelineDelegate<StepContext> next, CancellationToken cancellationToken = default)
     {
@@ -46,12 +46,12 @@ var context = new SampleContext();
 var services = new ServiceCollection();
 services.AddPipelineFor<SampleContext>();
 
-var provider = services.BuildServiceProvider()
+var provider = services.BuildServiceProvider();
 var runner = provider.GetRequiredService<IPipelineRunner<SampleContext>>();
 
 await runner.ExecuteAsync(context);
 
-Console.WriteLine(context.ToString()); // e.g. "A1,A2,B1"
+Console.WriteLine(context.ToString()); // e.g. "A1,B2,C3"
 ```
 
 Each registered pipeline step for `SampleContext` will be executed in order, unless short-circuited by a step that chooses not to call `next()`.

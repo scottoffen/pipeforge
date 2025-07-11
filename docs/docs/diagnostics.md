@@ -46,4 +46,4 @@ listener.Subscribe(new Observer((name, payload) =>
 
 ## Conclusion
 
-PipeForge diagnostics give you deep visibility into pipeline execution with minimal effort. Whether you’re debugging a failing step or building runtime instrumentation, the diagnostics hooks are ready to help.
+PipeForge diagnostics give you deep visibility into pipeline execution with minimal effort. Whether you're debugging a failing step or building runtime instrumentation, the diagnostics hooks are ready to help.
