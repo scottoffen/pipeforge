@@ -90,9 +90,9 @@ public class Step1 : PipelineStep<SampleContext>
 
 :::
 
-### Environment-Specific Steps
+### Adding a Step Filter
 
-You can limit which environments a step will be registered in by adding the `Environment` parameter to the `PipelineStep` attribute. This is useful to add steps that will only run in Development environments.
+You can limit when a step will be registered in by adding the `Filter` parameter to the `PipelineStep` attribute. This is useful to add steps that will only be registered when the `Development` filter is applied.
 
 ```csharp title="Step2.cs"
 [PipelineStep(2, "Development")]
@@ -102,16 +102,10 @@ public class Step2 : PipelineStep<SampleContext>
 }
 ```
 
-:::tip[Tip]
-
-Despite being named "Environment", this value is not limited solely to that purpose. You can use it filter out steps using any kind of value or feature flag that is known prior to step discovery and registration.
-
-:::
-
 :::danger[Caution]
 
-- Steps that do NOT have an `Environment` parameter in the attribute will always be registered during the step discovery process. 
-- Steps that DO have an `Environment` parameter in the attribute will only be registered if the same value is passed to the [registration extension method](./step-discovery.md).
+- Steps that do NOT have an `Filter` parameter in the attribute will always be registered during the step discovery process. 
+- Steps that DO have an `Filter` parameter in the attribute will only be registered if the same value is passed to the [registration extension method](./step-discovery.md).
 
 :::
 

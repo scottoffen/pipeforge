@@ -18,9 +18,9 @@ public sealed class PipelineStepDescriptor
     public int Order { get; }
 
     /// <summary>
-    /// The environment in which the step should be included, such as "Production" or "Development"
+    /// An optional step filter, such as "Production" or "Development"
     /// </summary>
-    public string? Environment { get; }
+    public string? Filter { get; }
 
     /// <summary>
     /// Creates a descriptor from the pipeline step type and extracts its metadata from the PipelineStepAttribute
@@ -35,6 +35,6 @@ public sealed class PipelineStepDescriptor
             ?? throw new InvalidOperationException($"Pipeline step '{implementationType.FullName}' must be decorated with [PipelineStep].");
 
         Order = attribute.Order;
-        Environment = attribute.Environment;
+        Filter = attribute.Filter;
     }
 }

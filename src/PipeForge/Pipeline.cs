@@ -49,9 +49,9 @@ public static class Pipeline
     /// Discovers pipeline steps for a specific context type from all assemblies in the current AppDomain.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="logger"></param>
@@ -68,30 +68,30 @@ public static class Pipeline
     /// Discovers pipeline steps for a specific context type from all assemblies in the current AppDomain.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
-        string? environmentName,
+        string? filterName,
         ILogger? logger = null)
         where TContext : class
     {
-        return Discover<TContext>(AppDomain.CurrentDomain.GetAssemblies(), environmentName, logger);
+        return Discover<TContext>(AppDomain.CurrentDomain.GetAssemblies(), filterName, logger);
     }
 
     /// <summary>
     /// Discovers pipeline steps for a specific context type from the assembly containing the provided type marker.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="typeMarker"></param>
@@ -110,32 +110,32 @@ public static class Pipeline
     /// Discovers pipeline steps for a specific context type from assembly containing the provided type marker.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="typeMarker"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Type typeMarker,
-        string? environmentName,
+        string? filterName,
         ILogger? logger = null)
         where TContext : class
     {
-        return Discover<TContext>(new[] { typeMarker.Assembly }, environmentName, logger);
+        return Discover<TContext>(new[] { typeMarker.Assembly }, filterName, logger);
     }
 
     /// <summary>
     /// Discovers pipeline steps for a specific context type from the provided assembly.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="assembly"></param>
@@ -154,32 +154,32 @@ public static class Pipeline
     /// Discovers pipeline steps for a specific context type from the provided assembly.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="assembly"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
     [ExcludeFromCodeCoverage]
     internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         Assembly assembly,
-        string? environmentName,
+        string? filterName,
         ILogger? logger = null)
         where TContext : class
     {
-        return Discover<TContext>(new[] { assembly }, environmentName, logger);
+        return Discover<TContext>(new[] { assembly }, filterName, logger);
     }
 
     /// <summary>
     /// Discovers pipeline steps for a specific context type from the provided assemblies.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="assemblies"></param>
@@ -198,18 +198,18 @@ public static class Pipeline
     /// Discovers pipeline steps for a specific context type from the provided assemblies.
     /// </summary>
     /// <remarks>
-    /// Specifying an environment name allows for conditional discovery of pipeline steps based on the environment.
-    /// Steps without an environment name will always be discovered.
-    /// Steps with an environment name will only be discovered if the current environment matches the specified name.
+    /// Specifying a filter allows for conditional discovery of pipeline steps based on the filter.
+    /// Steps without a filter will always be discovered.
+    /// Steps with a filter will only be discovered if the current filter matches the specified name.
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <param name="assemblies"></param>
-    /// <param name="environmentName"></param>
+    /// <param name="filterName"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
     internal static IEnumerable<PipelineStepDescriptor> Discover<TContext>(
         IEnumerable<Assembly> assemblies,
-        string? environmentName,
+        string? filterName,
         ILogger? logger = null)
         where TContext : class
     {
@@ -220,7 +220,7 @@ public static class Pipeline
             .SelectMany(a => SafeGetTypes(() => a.GetTypes()))
             .Where(t => !t.IsAbstract && !t.IsInterface && stepInterface.IsAssignableFrom(t) && t.GetCustomAttribute<PipelineStepAttribute>() != null)
             .Select(t => new PipelineStepDescriptor(t))
-            .Where(d => d.Environment == null || d.Environment.Equals(environmentName, StringComparison.OrdinalIgnoreCase))
+            .Where(d => d.Filter == null || d.Filter.Equals(filterName, StringComparison.OrdinalIgnoreCase))
             .OrderBy(d => d.Order)
             .ToList();
 
@@ -236,7 +236,7 @@ public static class Pipeline
                         StepDiscoveredMessage,
                         descriptor.ImplementationType.FullName ?? descriptor.ImplementationType.Name,
                         descriptor.Order,
-                        descriptor.Environment ?? "(none)");
+                        descriptor.Filter ?? "(none)");
                 }
             }
             else

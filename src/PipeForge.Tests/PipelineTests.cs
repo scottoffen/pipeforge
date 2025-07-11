@@ -25,7 +25,7 @@ public class PipelineTests
     }
 
     [Fact]
-    public void Discover_ReturnsDescriptors_WithEnvironmentName()
+    public void Discover_ReturnsDescriptors_WithFilter()
     {
         var descriptors1 = Pipeline.Discover<StepContext>(StepAssembly, "1").ToList();
         var descriptors2 = Pipeline.Discover<StepContext>(typeof(StepF), "2").ToList();
@@ -50,7 +50,7 @@ public class PipelineTests
     }
 
     [Fact]
-    public void Discover_ReturnsSteps_WithoutEnvironmentName()
+    public void Discover_ReturnsSteps_WithoutFilter()
     {
         var descriptors = Pipeline.Discover<StepContext>();
 

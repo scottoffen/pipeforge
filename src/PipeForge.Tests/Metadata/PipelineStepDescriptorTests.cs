@@ -31,7 +31,7 @@ public class PipelineStepDescriptorTests
 
         descriptor.ImplementationType.ShouldBe(typeof(AnnotatedStep));
         descriptor.Order.ShouldBe(42);
-        descriptor.Environment.ShouldBe("QA");
+        descriptor.Filter.ShouldBe("QA");
     }
 
     [Fact]
