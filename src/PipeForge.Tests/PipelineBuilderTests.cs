@@ -1,90 +1,97 @@
-using PipeForge.Tests.TestUtils;
+using Microsoft.Extensions.DependencyInjection;
+using PipeForge.Tests.Steps;
 
 namespace PipeForge.Tests;
 
 public class PipelineBuilderTests
 {
-    [Fact]
-    public async Task PipelineBuilder_CreatesAndRunsPipeline_WithoutLoggerFactory()
+    // This sample interface and implementation are used to validate
+    // that services can be added and resolved using the pipeline builder.
+    private interface IRandomNumberService
     {
-        var pipeline = Pipeline.CreateFor<TestContext>()
-            .WithStep<StepA>()
-            .WithStep<StepB>()
-            .WithStep<StepC>()
-            .Build();
-
-        var context = new TestContext();
-        await pipeline.ExecuteAsync(context);
-
-        string.Join("", context.ExecutedSteps).ShouldBe("ABC");
+        int GetRandomNumber();
     }
 
-    [Fact]
-    public async Task PipelineBuilder_CreatesAndRunsPipeline_WithLoggerFactory()
+    private class RandomNumberService : IRandomNumberService
     {
-        var loggerFactory = new TestLoggerProvider();
-        var pipeline = Pipeline.CreateFor<TestContext>(loggerFactory)
-            .WithStep<StepA>()
-            .WithStep<StepB>()
-            .WithStep<StepC>()
-            .Build();
+        private static readonly Random _random = new();
 
-        var context = new TestContext();
-        await pipeline.ExecuteAsync(context);
-
-        string.Join("", context.ExecutedSteps).ShouldBe("ABC");
-
-        var logger = loggerFactory.CreateLogger("something");
-        logger.ShouldNotBeNull();
-        var testLogger = logger as TestLogger;
-        testLogger.ShouldNotBeNull();
-
-        testLogger.LogEntries.Count.ShouldBe(6);
-    }
-
-    [Fact]
-    public async Task PipelineBuilder_CreatesAndRunsPipeline_UsingStepFactory()
-    {
-        var expected = Guid.NewGuid().ToString();
-        var pipeline = Pipeline.CreateFor<TestContext>()
-            .WithStep<StepA>()
-            .WithStep<StepB>()
-            .WithStep<StepC>()
-            .WithStep(() => new StepD(expected))
-            .Build();
-
-        var context = new TestContext();
-        await pipeline.ExecuteAsync(context);
-
-        string.Join("", context.ExecutedSteps).ShouldBe($"ABC{expected}");
-    }
-
-    private abstract class TestStep : PipelineStep<TestContext>
-    {
-        public override async Task InvokeAsync(TestContext context, PipelineDelegate<TestContext> next, CancellationToken cancellationToken = default)
+        public int GetRandomNumber()
         {
-            context.ExecutedSteps.Add(Name);
-            await next(context, cancellationToken);
+            return _random.Next();
         }
     }
 
-    private class StepA : TestStep
+    private class BuilderStep1 : PipelineStep<SampleContext>
     {
-        public StepA() => Name = "A";
+        public override Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
+        {
+            context.AddStep("BuilderStep1");
+            return next(context, cancellationToken);
+        }
     }
 
-    private class StepB : TestStep
+    private class BuilderStep2 : PipelineStep<SampleContext>
     {
-        public StepB() => Name = "B";
+        private readonly IRandomNumberService _randomNumberService;
+
+        public BuilderStep2(IRandomNumberService randomNumberService)
+        {
+            _randomNumberService = randomNumberService;
+        }
+
+        public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
+        {
+            context.AddStep("BuilderStep2");
+            await next(context, cancellationToken);
+            context.AddStep(_randomNumberService.GetRandomNumber().ToString());
+        }
     }
 
-    private class StepC : TestStep
+    [Fact]
+    public async Task Test1()
     {
-        public StepC() => Name = "C";
-    }
+        var context = new SampleContext();
+        var builder = Pipeline.CreateFor<SampleContext>();
 
-    private class StepD : TestStep
-    {
-        public StepD(string name) => Name = name;
+        // Test adding a service to the pipeline
+        builder.ConfigureServices(services =>
+        {
+            services.AddSingleton<IRandomNumberService, RandomNumberService>();
+        });
+
+        builder.WithStep<SampleContextStepA>();
+
+        // Test adding a step with a delegate
+        builder.WithStep((ctx, next, cancellationToken) =>
+        {
+            ctx.AddStep("BuilderStep0");
+            return next(ctx, cancellationToken);
+        });
+
+        // Test adding a step using a class
+        builder.WithStep<BuilderStep1>();
+
+        // Test adding a step using a class with dependencies
+        builder.WithStep<BuilderStep2>();
+
+        // Test adding a step with a delegate
+        builder.WithStep((ctx, next, cancellationToken) =>
+        {
+            ctx.AddStep("BuilderStep3");
+            return next(ctx, cancellationToken);
+        });
+
+        var pipeline = builder.Build();
+
+        await pipeline.ExecuteAsync(context);
+
+        context.Steps.Count.ShouldBe(6);
+        context.Steps[0].ShouldBe(SampleContextStepA.StepName);
+        context.Steps[1].ShouldBe("BuilderStep0");
+        context.Steps[2].ShouldBe("BuilderStep1");
+        context.Steps[3].ShouldBe("BuilderStep2");
+        context.Steps[4].ShouldBe("BuilderStep3");
+        int.TryParse(context.Steps[5], out _).ShouldBeTrue();
     }
 }
