@@ -18,13 +18,13 @@ internal static class InternalTypeExtensions
     {
         var targetInterface = typeof(T);
 
-        return type.IsClass &&
+        return type.GetInterfaces()
+            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == _pipelineStepType) &&
+            type.IsClass &&
             !type.IsAbstract &&
             !type.IsGenericTypeDefinition &&
             !type.ContainsGenericParameters &&
-            targetInterface.IsAssignableFrom(type) &&
-            type.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == _pipelineStepType);
+            targetInterface.IsAssignableFrom(type);
     }
 
     /// <summary>
@@ -35,8 +35,7 @@ internal static class InternalTypeExtensions
     public static bool ImplementsPipelineStep(this Type type)
     {
         if (type == null) return false;
-        return type.GetInterfaces()
-            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == _pipelineStepType)
-            || (type.IsGenericType && type.GetGenericTypeDefinition() == _pipelineStepType);
+        return (type.IsGenericType && type.GetGenericTypeDefinition() == _pipelineStepType) ||
+            type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == _pipelineStepType);
     }
 }

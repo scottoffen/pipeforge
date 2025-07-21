@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace PipeForge.Extensions;
 
+[ExcludeFromCodeCoverage]
 internal static class CompositionExtensions
 {
     private static readonly string _loggerCategory = "PipeForge";
