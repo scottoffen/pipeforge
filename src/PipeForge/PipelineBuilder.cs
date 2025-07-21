@@ -19,7 +19,7 @@ public class PipelineBuilder<TContext> where TContext : class
         if (loggerFactory != null)
         {
             _services.AddSingleton(loggerFactory);
-            _services.AddSingleton(typeof(ILogger<>), typeof(Logger<>)); // optional but good for ILogger<T> resolution
+            _services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
         }
         else
         {

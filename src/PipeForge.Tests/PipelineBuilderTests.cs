@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PipeForge.Tests.Steps;
 
 namespace PipeForge.Tests;
@@ -48,11 +49,15 @@ public class PipelineBuilderTests
         }
     }
 
-    [Fact]
-    public async Task Test1()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task PipelineBuilder_CreatesAndRunsPipeline(bool provideLogger)
     {
+        ILoggerFactory? loggerFactory = provideLogger ? new LoggerFactory() : null;
+
         var context = new SampleContext();
-        var builder = Pipeline.CreateFor<SampleContext>();
+        var builder = Pipeline.CreateFor<SampleContext>(loggerFactory);
 
         // Test adding a service to the pipeline
         builder.ConfigureServices(services =>
@@ -93,5 +98,14 @@ public class PipelineBuilderTests
         context.Steps[3].ShouldBe("BuilderStep2");
         context.Steps[4].ShouldBe("BuilderStep3");
         int.TryParse(context.Steps[5], out _).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void PipelineBuilder_ThrowsException_WhenTypeImplementsIPipelineStep()
+    {
+        Should.Throw<ArgumentException>(() =>
+        {
+            _ = Pipeline.CreateFor<SampleContextStepA>();
+        });
     }
 }
