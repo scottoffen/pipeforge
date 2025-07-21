@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace PipeForge.Logging;
 
+[ExcludeFromCodeCoverage]
 internal sealed class MinimalConsoleLoggerProvider : ILoggerProvider
 {
     private readonly ConcurrentDictionary<string, MinimalConsoleLogger> _loggers = new();

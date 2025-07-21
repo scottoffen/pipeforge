@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace PipeForge.Logging;
 
+[ExcludeFromCodeCoverage]
 internal sealed class MinimalConsoleLogger : ILogger
 {
     private readonly string _categoryName;
