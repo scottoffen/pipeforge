@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace PipeForge.Adapters.Diagnostics;
 
 internal interface IPipelineDiagnostics<T> where T : class
@@ -19,15 +17,4 @@ internal interface IPipelineDiagnostics<T> where T : class
     /// <param name="step"></param>
     /// <param name="order"></param>
     void ReportException(Exception ex, IPipelineStep<T> step, int order);
-}
-
-[ExcludeFromCodeCoverage]
-internal sealed class NullScope : IPipelineDiagnosticsScope
-{
-    public static readonly NullScope Instance = new();
-    public void Dispose() { }
-
-    public void SetCanceled() {}
-
-    public void SetShortCircuited(bool value) { }
 }

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace PipeForge.Adapters.Diagnostics;
 
+[ExcludeFromCodeCoverage]
 internal static class PipelineDiagnosticsFactory
 {
     /// <summary>
