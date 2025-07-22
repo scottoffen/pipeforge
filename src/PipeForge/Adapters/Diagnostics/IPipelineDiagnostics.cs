@@ -1,6 +1,6 @@
 namespace PipeForge.Adapters.Diagnostics;
 
-internal interface IPipelineDiagnostics<T>
+internal interface IPipelineDiagnostics<T> where T : class
 {
     /// <summary>
     /// Begins a diagnostics scope for the given step.

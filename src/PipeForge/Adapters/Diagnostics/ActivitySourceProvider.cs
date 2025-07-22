@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace PipeForge.Adapters.Diagnostics;
 
-internal sealed class ActivitySourceProvider<T> : IPipelineDiagnostics<T>
+internal sealed class ActivitySourceProvider<T> : IPipelineDiagnostics<T> where T : class
 {
     private static readonly ActivitySource _source = new($"PipeForge.PipelineRunner<{typeof(T).Name}>");
     private static readonly string _activityName = "PipelineStep";
@@ -46,6 +46,11 @@ internal sealed class ActivitySourceProvider<T> : IPipelineDiagnostics<T>
         public void Dispose()
         {
             _activity?.Dispose();
+        }
+
+        public void SetCanceled()
+        {
+            _activity?.SetTag("pipeline.cancelled", true);
         }
 
         public void SetShortCircuited(bool value)

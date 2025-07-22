@@ -1,4 +1,4 @@
-namespace PipeForge.Adapters;
+namespace PipeForge.Adapters.Json;
 
 internal interface IJsonSerializer
 {
@@ -17,16 +17,4 @@ internal interface IJsonSerializer
     /// <param name="json"></param>
     /// <returns></returns>
     T Deserialize<T>(string json);
-}
-
-internal static class JsonSerializerFactory
-{
-    public static IJsonSerializer Create()
-    {
-#if NETSTANDARD2_0
-        return new NewtonsoftJsonSerializer();
-#else
-        return new SystemTextJsonSerializer();
-#endif
-    }
 }

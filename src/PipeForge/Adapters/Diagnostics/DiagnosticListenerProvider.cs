@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace PipeForge.Adapters.Diagnostics;
 
-internal sealed class DiagnosticListenerProvider<T> : IPipelineDiagnostics<T>
+internal sealed class DiagnosticListenerProvider<T> : IPipelineDiagnostics<T> where T : class
 {
     private static readonly DiagnosticListener _listener = new($"PipeForge.PipelineRunner<{typeof(T).Name}>");
     private static readonly string _activityName = "PipelineStep";
@@ -55,6 +55,11 @@ internal sealed class DiagnosticListenerProvider<T> : IPipelineDiagnostics<T>
 
         public void Dispose() => _listener.StopActivity(_activity, _metadata);
 
+        public void SetCanceled()
+        {
+            _metadata.cancelled = true;
+        }
+
         public void SetShortCircuited(bool value)
         {
             _metadata.short_circuited = value;
@@ -68,10 +73,11 @@ internal sealed class DiagnosticListenerProvider<T> : IPipelineDiagnostics<T>
         public int step_order { get; set; }
         public string? step_description { get; set; }
         public bool short_circuited { get; set; }
+        public bool cancelled { get; set; }
 
         public override string ToString()
         {
-            return $"{{ context_type = {context_type}, step_name = {step_name}, step_order = {step_order}, step_description = {step_description}, short_circuited = {short_circuited} }}";
+            return $"{{ context_type = {context_type}, step_name = {step_name}, step_order = {step_order}, step_description = {step_description}, short_circuited = {short_circuited}, cancelled = {cancelled} }}";
         }
     }
 }

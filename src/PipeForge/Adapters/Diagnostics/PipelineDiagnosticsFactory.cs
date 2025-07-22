@@ -6,11 +6,11 @@ namespace PipeForge.Adapters.Diagnostics;
 internal static class PipelineDiagnosticsFactory
 {
     /// <summary>
-    /// Returns an implementation of IPipelineDiagnostics for the given type T.
+    /// Returns an implementation of IPipelineDiagnostics for the given class T.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static IPipelineDiagnostics<T> Create<T>()
+    public static IPipelineDiagnostics<T> Create<T>() where T : class
     {
 #if NETSTANDARD2_0
         return new DiagnosticListenerProvider<T>();
