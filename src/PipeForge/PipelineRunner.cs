@@ -1,11 +1,12 @@
 using System.Diagnostics;
-using PipeForge.Adapters;
-
 using Microsoft.Extensions.Logging;
+using PipeForge.Adapters.Json;
+using PipeForge.Adapters.Diagnostics;
 
 namespace PipeForge;
 
 public class PipelineRunner<T> : IPipelineRunner<T>
+    where T : class
 {
     private static readonly IJsonSerializer _jsonSerializer = JsonSerializerFactory.Create();
     private static readonly IPipelineDiagnostics<T> _diagnostics = PipelineDiagnosticsFactory.Create<T>();

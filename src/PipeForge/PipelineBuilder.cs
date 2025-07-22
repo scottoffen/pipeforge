@@ -7,6 +7,7 @@ namespace PipeForge;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class PipelineBuilder<T>
+    where T : class
 {
     private readonly List<Lazy<IPipelineStep<T>>> _steps = new();
     private readonly ILoggerFactory? _loggerFactory;
