@@ -1,7 +1,7 @@
 #if NETSTANDARD2_0
 using System.Diagnostics;
 
-namespace PipeForge.Adapters;
+namespace PipeForge.Adapters.Diagnostics;
 
 internal sealed class DiagnosticListenerProvider<T> : IPipelineDiagnostics<T>
 {
