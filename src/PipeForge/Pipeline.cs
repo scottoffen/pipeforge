@@ -32,20 +32,6 @@ public static class Pipeline
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="PipelineBuilder{T}"/> for the specified context type.
-    /// </summary>
-    /// <remarks>
-    /// This method is used to start building a pipeline for a specific type.
-    /// It allows for fluent configuration of pipeline steps.
-    /// </remarks>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static PipelineBuilder<T> CreateFor<T>(ILoggerFactory? loggerFactory) where T : class
-    {
-        return new PipelineBuilder<T>(loggerFactory);
-    }
-
-    /// <summary>
     /// Discovers pipeline steps for a specific context type from all assemblies in the current AppDomain.
     /// </summary>
     /// <remarks>

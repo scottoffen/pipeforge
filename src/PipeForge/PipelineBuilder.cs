@@ -1,41 +1,37 @@
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PipeForge;
 
 /// <summary>
 /// PipelineBuilder is used to configure and build a pipeline of steps.
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public class PipelineBuilder<T>
-    where T : class
+/// <typeparam name="TContext"></typeparam>
+public class PipelineBuilder<TContext>
+    where TContext : class
 {
-    private readonly List<Lazy<IPipelineStep<T>>> _steps = new();
-    private readonly ILoggerFactory? _loggerFactory;
+    private readonly IServiceCollection _services = new ServiceCollection();
 
-    internal PipelineBuilder() { }
-
-    internal PipelineBuilder(ILoggerFactory? loggerFactory)
-    {
-        _loggerFactory = loggerFactory;
-    }
+    internal PipelineBuilder()
+    { }
 
     /// <summary>
     /// Builds a pipeline from the configured steps
     /// </summary>
     /// <returns></returns>
-    public IPipelineRunner<T> Build()
+    public IPipelineRunner<TContext> Build()
     {
-        return new PipelineRunner<T>(_steps, _loggerFactory);
+        //return new PipelineRunner<TContext>(_services.BuildServiceProvider());
+        throw new NotImplementedException();
     }
 
     /// <summary>
-    /// Adds a step to the pipeline
+    /// Configures the services used by the pipeline
     /// </summary>
-    /// <typeparam name="TStep"></typeparam>
+    /// <param name="configure"></param>
     /// <returns></returns>
-    public PipelineBuilder<T> WithStep<TStep>() where TStep : IPipelineStep<T>, new()
+    public PipelineBuilder<TContext> ConfigureServices(Action<IServiceCollection> configure)
     {
-        _steps.Add(new(() => new TStep()));
+        configure(_services);
         return this;
     }
 
@@ -43,11 +39,30 @@ public class PipelineBuilder<T>
     /// Adds a step to the pipeline
     /// </summary>
     /// <typeparam name="TStep"></typeparam>
-    /// <param name="stepFactory"></param>
     /// <returns></returns>
-    public PipelineBuilder<T> WithStep<TStep>(Func<TStep> stepFactory) where TStep : IPipelineStep<T>
+    public PipelineBuilder<TContext> WithStep<TStep>() where TStep : class, IPipelineStep<TContext>
     {
-        _steps.Add(new(() => stepFactory()));
+        _services.AddPipelineStep<TStep>();
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a step to the pipeline using a delegate. By default, the step is registered with a transient lifetime.
+    /// You can specify a different lifetime if needed.
+    /// </summary>
+    /// <param name="invoke">The delegate to invoke for the step.</param>
+    /// <param name="lifetime">The service lifetime for the step. Defaults to <see cref="ServiceLifetime.Transient"/>.</param>
+    /// <returns></returns>
+    public PipelineBuilder<TContext> WithStep(
+        Func<TContext, PipelineDelegate<TContext>, CancellationToken, Task> invoke,
+        ServiceLifetime lifetime = ServiceLifetime.Transient)
+    {
+        var stepFactory = new Func<IServiceProvider, DelegatePipelineStep<TContext>>(_ => new DelegatePipelineStep<TContext>(invoke));
+
+        _services.Add(ServiceDescriptor.Describe(typeof(IPipelineStep<TContext>), stepFactory, lifetime));
+        _services.Add(ServiceDescriptor.Describe(typeof(Lazy<IPipelineStep<TContext>>),
+            sp => new Lazy<IPipelineStep<TContext>>(() => stepFactory(sp)), lifetime));
+
         return this;
     }
 }
