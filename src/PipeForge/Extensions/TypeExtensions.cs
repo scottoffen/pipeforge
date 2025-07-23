@@ -1,7 +1,10 @@
+using System.Collections.Concurrent;
+
 namespace PipeForge.Extensions;
 
-public static class TypeExtensions
+internal static class TypeExtensions
 {
+    private static readonly ConcurrentDictionary<Type, string> _typeNamesCache = new();
     private static readonly Type _pipelineStepType = typeof(IPipelineStep<>);
 
     /// <summary>
@@ -27,5 +30,18 @@ public static class TypeExtensions
         var baseInterfaces = type.BaseType?.GetInterfaces() ?? [];
         var directInterfaces = type.GetInterfaces().Except(baseInterfaces);
         return directInterfaces.Contains(interfaceType);
+    }
+
+    /// <summary>
+    /// Gets the full name of the type, or its name if the full name is not available.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static string GetTypeName(this Type type)
+    {
+        return _typeNamesCache.GetOrAdd(type, t =>
+        {
+            return t.FullName ?? t.Name ?? string.Empty;
+        });
     }
 }

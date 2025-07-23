@@ -1,4 +1,5 @@
 using System.Reflection;
+using PipeForge.Metadata;
 
 namespace PipeForge.Extensions;
 
@@ -20,20 +21,39 @@ internal static class AssemblyExtensions
         var targetInterface = typeof(T);
         if (!targetInterface.IsInterface)
         {
-            var targetInterfaceName = targetInterface.FullName ?? targetInterface.Name;
+            var targetInterfaceName = targetInterface.GetTypeName();
             throw new ArgumentException(string.Format(MessageNotAnInterface, targetInterfaceName), nameof(T));
         }
 
         return assemblies
             .SelectMany(a => SafeGetTypes(() => a.GetTypes()))
             .Where(t =>
-                targetInterface.IsAssignableFrom(t) &&
-                t.IsClass &&
-                !t.IsInterface &&
-                !t.IsAbstract &&
-                !t.IsGenericTypeDefinition &&
-                !t.ContainsGenericParameters
+                targetInterface.IsAssignableFrom(t)
+                 && t.IsClass
+                 && !t.IsAbstract
+                && !t.IsGenericTypeDefinition
+                && !t.ContainsGenericParameters
             );
+    }
+
+    /// <summary>
+    /// Retrieves pipeline step descriptors for the specified interface from
+    /// the provided assemblies
+    /// </summary>
+    /// <remarks>
+    /// Includes steps that match any of the (optional) provided filters.
+    /// </remarks>
+    /// <typeparam name="TStepInterface"></typeparam>
+    /// <param name="assemblies"></param>
+    /// <param name="filters"></param>
+    /// <returns></returns>
+    public static IEnumerable<PipelineStepDescriptor> GetDescriptorsFor<TStepInterface>(this IEnumerable<Assembly> assemblies, string[]? filters)
+    {
+        return assemblies
+            .FindClosedImplementationsOf<TStepInterface>()
+            .Select(t => new PipelineStepDescriptor(t))
+            .Where(d => d.Filters.MatchesAnyFilter(filters))
+            .OrderBy(d => d.Order);
     }
 
     /// <summary>

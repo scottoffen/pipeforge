@@ -25,7 +25,7 @@ internal static class StepInterfaceDescriptor<TStepInterface>
 
     static StepInterfaceDescriptor()
     {
-        var name = InterfaceType.FullName ?? InterfaceType.Name;
+        var name = InterfaceType.GetTypeName();
 
         if (!InterfaceType.IsInterface)
         {

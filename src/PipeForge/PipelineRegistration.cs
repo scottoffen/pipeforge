@@ -30,13 +30,12 @@ internal static class PipelineRegistration
     {
         var logger = services.GetLogger();
         var contextType = typeof(TContext);
-        var contextTypeName = contextType.FullName ?? contextType.Name;
 
         // 0. Ensure that the context type does not implement IPipelineStep<>
         if (contextType.ImplementsPipelineStep())
         {
-            logger?.LogError(MessageInvalidContextType, contextTypeName);
-            throw new InvalidOperationException(string.Format(MessageInvalidContextType, contextTypeName));
+            logger?.LogError(MessageInvalidContextType, contextType.GetTypeName());
+            throw new ArgumentException(string.Format(MessageInvalidContextType, contextType.GetTypeName()));
         }
 
         // 1. Register the pipeline runner first. We don't want to register
@@ -47,11 +46,7 @@ internal static class PipelineRegistration
         }
 
         // 2. Get descriptor for each step in the pipeline.
-        var descriptors = assemblies
-            .FindClosedImplementationsOf<TStepInterface>()
-            .Select(t => new PipelineStepDescriptor(t))
-            .Where(d => d.Filters.MatchesAnyFilter(filters))
-            .OrderBy(d => d.Order);
+        var descriptors = assemblies.GetDescriptorsFor<TStepInterface>(filters);
 
         // 3. Register each discovered step in the pipeline.
         var counter = 0;
@@ -70,7 +65,7 @@ internal static class PipelineRegistration
         }
 
         // 4. Log the number of steps found and registered.
-        logger?.LogStepsRegistered(counter, contextTypeName);
+        logger?.LogStepsRegistered(counter, contextType.GetTypeName());
 
         return services;
     }
@@ -85,12 +80,11 @@ internal static class PipelineRegistration
         where TRunnerInterface : IPipelineRunner<TContext, TStepInterface>
     {
         var runnerType = typeof(TRunnerInterface);
-        var runnerTypeName = runnerType.FullName ?? runnerType.Name;
 
         // 0. Return early if the runner is already registered.
         if (services.Any(service => service.ServiceType == runnerType))
         {
-            logger?.LogWarning(MessageRunnerAlreadyRegistered, runnerTypeName);
+            logger?.LogWarning(MessageRunnerAlreadyRegistered, runnerType.GetTypeName());
             return false;
         }
 
@@ -102,24 +96,23 @@ internal static class PipelineRegistration
         // 2. If a concrete implementation is found, register it.
         if (concreteRunner is not null)
         {
-            var concreteRunnerName = concreteRunner.FullName ?? concreteRunner.Name;
-            logger?.LogDebug(MessageRunnerRegistration, concreteRunnerName, runnerTypeName, lifetime.ToString());
+            logger?.LogDebug(MessageRunnerRegistration, concreteRunner.GetTypeName(), runnerType.GetTypeName(), lifetime.ToString());
             services.TryAdd(ServiceDescriptor.Describe(runnerType, concreteRunner, lifetime));
             return true;
         }
 
-        // 3. Otherwise, attempt to register the default runner implementation.
-        var defaultImplementation = typeof(DefaultPipelineRunner<TContext, TStepInterface>);
-        if (runnerType.IsAssignableFrom(defaultImplementation))
+        // 3. Otherwise, attempt to register the default runner implementations.
+        var defaultImplementation = GetDefaultRunnerImplementation<TContext, TStepInterface>(runnerType);
+        if (defaultImplementation is not null)
         {
-            logger?.LogDebug(MessageRunnerRegistration, defaultImplementation.FullName ?? defaultImplementation.Name, runnerTypeName, lifetime.ToString());
+            logger?.LogDebug(MessageRunnerRegistration, defaultImplementation.GetTypeName(), runnerType.GetTypeName(), lifetime.ToString());
             services.TryAdd(ServiceDescriptor.Describe(runnerType, defaultImplementation, lifetime));
             return true;
         }
 
         // 4. No implementation found, and the default is not valid — throw
-        logger?.LogWarning(MessageRunnerImplementationNotFound, runnerTypeName);
-        throw new InvalidOperationException(string.Format(MessageRunnerImplementationNotFound, runnerTypeName));
+        logger?.LogWarning(MessageRunnerImplementationNotFound, runnerType.GetTypeName());
+        throw new InvalidOperationException(string.Format(MessageRunnerImplementationNotFound, runnerType.GetTypeName()));
     }
 
     public static void RegisterStep(
@@ -166,5 +159,22 @@ internal static class PipelineRegistration
             return Activator.CreateInstance(descriptor.LazyType, factoryDelegate)
                 ?? throw new InvalidOperationException($"Could not create Lazy<{descriptor.InterfaceType}>.");
         }, lifetime));
+    }
+
+    private static Type? GetDefaultRunnerImplementation<TContext, TStepInterface>(Type runnerType)
+        where TContext : class
+        where TStepInterface : IPipelineStep<TContext>
+    {
+        if (runnerType.IsAssignableFrom(typeof(DefaultPipelineRunner<TContext, TStepInterface>)))
+        {
+            return typeof(DefaultPipelineRunner<TContext, TStepInterface>);
+        }
+
+        if (runnerType.IsAssignableFrom(typeof(DefaultPipelineRunner<TContext>)))
+        {
+            return typeof(DefaultPipelineRunner<TContext>);
+        }
+
+        return null;
     }
 }

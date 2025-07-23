@@ -32,7 +32,7 @@ public static class AddPipelineExtensions
     /// <returns></returns>
     public static IServiceCollection AddPipeline<TContext>(
         this IServiceCollection services,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
     {
         return services.AddPipeline<TContext, IPipelineStep<TContext>, IPipelineRunner<TContext>>(
@@ -66,7 +66,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
     {
         return services.AddPipeline<TContext, IPipelineStep<TContext>, IPipelineRunner<TContext>>(
@@ -100,7 +100,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext>(
         this IServiceCollection services,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
     {
         return services.AddPipeline<TContext, IPipelineStep<TContext>, IPipelineRunner<TContext>>(
@@ -136,7 +136,7 @@ public static class AddPipelineExtensions
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
     {
         return services.AddPipeline<TContext, IPipelineStep<TContext>, IPipelineRunner<TContext>>(
@@ -173,7 +173,7 @@ public static class AddPipelineExtensions
     /// <returns></returns>
     public static IServiceCollection AddPipeline<TContext, TStepInterface>(
         this IServiceCollection services,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
     {
@@ -209,7 +209,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext, TStepInterface>(
         this IServiceCollection services,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
     {
@@ -245,7 +245,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext, TStepInterface>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
     {
@@ -283,7 +283,7 @@ public static class AddPipelineExtensions
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
     {
@@ -322,7 +322,7 @@ public static class AddPipelineExtensions
     /// <returns></returns>
     public static IServiceCollection AddPipeline<TContext, TStepInterface, TRunnerInterface>(
         this IServiceCollection services,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
         where TRunnerInterface : IPipelineRunner<TContext, TStepInterface>
@@ -360,7 +360,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext, TStepInterface, TRunnerInterface>(
         this IServiceCollection services,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
         where TRunnerInterface : IPipelineRunner<TContext, TStepInterface>
@@ -398,7 +398,7 @@ public static class AddPipelineExtensions
     public static IServiceCollection AddPipeline<TContext, TStepInterface, TRunnerInterface>(
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
         where TRunnerInterface : IPipelineRunner<TContext, TStepInterface>
@@ -438,7 +438,7 @@ public static class AddPipelineExtensions
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies,
         ServiceLifetime lifetime,
-        string[]? filters)
+        string[]? filters = null)
         where TContext : class
         where TStepInterface : IPipelineStep<TContext>
         where TRunnerInterface : IPipelineRunner<TContext, TStepInterface>

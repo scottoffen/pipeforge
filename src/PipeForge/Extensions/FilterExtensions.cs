@@ -13,7 +13,8 @@ internal static class FilterExtensions
     /// <returns></returns>
     public static bool MatchesAnyFilter(this IEnumerable<string> descriptorFilters, string[]? filters)
     {
-        if (filters is null || !filters.Any()) return true;
+        if (!descriptorFilters.Any()) return true;
+        if (filters is null || !filters.Any()) return false;
         return descriptorFilters.Any(df => filters.Any(f => string.Equals(df, f, _comp)));
     }
 }

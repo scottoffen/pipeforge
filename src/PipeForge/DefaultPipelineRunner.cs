@@ -12,3 +12,12 @@ internal sealed class DefaultPipelineRunner<TContext, TStepInterface> : Pipeline
     {
     }
 }
+
+[ExcludeFromCodeCoverage]
+internal sealed class DefaultPipelineRunner<TContext> : PipelineRunner<TContext, IPipelineStep<TContext>>, IPipelineRunner<TContext>
+    where TContext : class
+{
+    public DefaultPipelineRunner(IServiceProvider serviceProvider) : base(serviceProvider)
+    {
+    }
+}

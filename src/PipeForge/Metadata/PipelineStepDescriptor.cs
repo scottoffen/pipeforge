@@ -1,4 +1,5 @@
 using System.Reflection;
+using PipeForge.Extensions;
 
 namespace PipeForge.Metadata;
 
@@ -34,7 +35,7 @@ internal sealed class PipelineStepDescriptor
         ImplementationType = implementationType;
 
         var attribute = implementationType.GetCustomAttribute<PipelineStepAttribute>()
-            ?? throw new InvalidOperationException(string.Format(InvalidOperationExceptionMessage, implementationType.FullName ?? ImplementationType.Name));
+            ?? throw new InvalidOperationException(string.Format(InvalidOperationExceptionMessage, implementationType.GetTypeName()));
 
         Order = attribute.Order;
         Filters = attribute.Filters;

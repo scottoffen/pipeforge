@@ -22,8 +22,7 @@ public static class Pipeline
         var contextType = typeof(TContext);
         if (contextType.ImplementsPipelineStep())
         {
-            var contextTypeName = contextType.FullName ?? contextType.Name;
-            throw new ArgumentException(string.Format(MessageInvalidContextType, contextTypeName));
+            throw new ArgumentException(string.Format(MessageInvalidContextType, contextType.GetTypeName()));
         }
 
         return new PipelineBuilder<TContext>();
