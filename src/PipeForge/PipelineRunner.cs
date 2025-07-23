@@ -1,28 +1,44 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PipeForge.Adapters.Json;
 using PipeForge.Adapters.Diagnostics;
+using PipeForge.Adapters.Json;
 
 namespace PipeForge;
 
-public class PipelineRunner<T> : IPipelineRunner<T>
-    where T : class
+public abstract class PipelineRunner<TContext, TStepInterface> : IPipelineRunner<TContext, TStepInterface>
+    where TContext : class
+    where TStepInterface : IPipelineStep<TContext>
 {
     private static readonly IJsonSerializer _jsonSerializer = JsonSerializerFactory.Create();
-    private static readonly IPipelineDiagnostics<T> _diagnostics = PipelineDiagnosticsFactory.Create<T>();
+    private static readonly IPipelineDiagnostics<TContext> _diagnostics = PipelineDiagnosticsFactory.Create<TContext>();
 
-    private readonly IEnumerable<Lazy<IPipelineStep<T>>> _lazySteps;
-    private readonly ILogger? _logger;
+    private static readonly string _pipelineContextType = "PipelineContextType";
+    private static readonly string _pipelineStepName = "PipelineStepName";
+    private static readonly string _pipelineStepOrder = "PipelineStepOrder";
 
-    public PipelineRunner(IEnumerable<Lazy<IPipelineStep<T>>> lazySteps, ILoggerFactory? loggerFactory = null)
+    protected internal static readonly string MessagePipelineExecutionEnd = "Pipeline execution ended for {0}";
+    protected internal static readonly string MessagePipelineExecutionStart = "Pipeline execution started for {0}";
+    protected internal static readonly string MessageStepExecutionEnd = "Pipeline step completed {0} (Order {1}) in {2} ms";
+    protected internal static readonly string MessageStepExecutionException = "Pipeline step exception {0} (Order {1})";
+    protected internal static readonly string MessageStepExecutionStart = "Pipeline step executing {0} (Order {1})";
+    protected internal static readonly string MessageStepShortCircuited = "Pipeline step short circuit {0} (Order {1}) after {2} ms";
+
+    private readonly IServiceProvider _serviceProvider;
+
+    protected readonly ILogger? Logger;
+    protected IEnumerable<Lazy<TStepInterface>> LazySteps => _serviceProvider.GetServices<Lazy<TStepInterface>>();
+
+    public PipelineRunner(IServiceProvider serviceProvider)
     {
-        _lazySteps = lazySteps;
-        _logger = loggerFactory?.CreateLogger($"PipelineRunner<{typeof(T).Name}>");
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        Logger = _serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(GetType());
     }
 
     public string Describe()
     {
-        var steps = _lazySteps
+        var steps = LazySteps
             .Select(s => s.Value)
             .Select((step, index) => new
             {
@@ -51,20 +67,20 @@ public class PipelineRunner<T> : IPipelineRunner<T>
                 ["MayShortCircuit"] = new { type = "boolean", description = "Whether the step may halt pipeline execution early" },
                 ["ShortCircuitCondition"] = new { type = "string", description = "Explanation of the short-circuit condition, if any" },
             },
-            ["required"] = new[] { "Order", "Name", "MayShortCircuit" }
+            ["required"] = new[] { "Order" }
         };
 
         return _jsonSerializer.Serialize(schema);
     }
 
-    public async Task ExecuteAsync(T context, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken = default)
     {
         if (context is null)
             throw new ArgumentNullException(nameof(context));
 
-        PipelineDelegate<T> next = (_, _) => Task.CompletedTask;
+        PipelineDelegate<TContext> next = (_, _) => Task.CompletedTask;
 
-        var steps = _lazySteps
+        var steps = LazySteps
             .Select((lazy, index) => (LazyStep: lazy, Order: index))
             .Reverse()
             .ToList();
@@ -77,56 +93,71 @@ public class PipelineRunner<T> : IPipelineRunner<T>
             {
                 var step = lazyStep.Value;
 
-                using (_logger?.BeginScope(new Dictionary<string, object>
+                using (Logger?.BeginScope(new Dictionary<string, object>
                 {
-                    ["PipelineContextType"] = typeof(T).Name,
-                    ["PipelineStepName"] = step.Name,
-                    ["PipelineStepOrder"] = order
+                    [_pipelineContextType] = typeof(TContext).Name,
+                    [_pipelineStepName] = step.Name,
+                    [_pipelineStepOrder] = order
                 }))
                 {
                     using var activity = _diagnostics.BeginStep(step, order);
 
                     try
                     {
+                        if (ct.IsCancellationRequested)
+                        {
+                            Logger?.LogInformation("Pipeline cancelled before executing step {Step} (Order {Order})", step.Name, order);
+                            activity?.SetCanceled();
+                            ct.ThrowIfCancellationRequested();
+                        }
+
                         var sw = Stopwatch.StartNew();
                         var wasCalled = false;
 
-                        async Task wrappedNext(T c, CancellationToken token = default)
+                        async Task wrappedNext(TContext c, CancellationToken token = default)
                         {
                             wasCalled = true;
                             await previous(c, token);
                         }
 
-                        _logger?.LogTrace("Executing pipeline step {StepName} (Order {StepOrder})", step.Name, order);
+                        Logger?.LogTrace(MessageStepExecutionStart, step.Name, order);
                         await step.InvokeAsync(ctx, wrappedNext, ct);
                         sw.Stop();
 
                         if (wasCalled)
                         {
-                            _logger?.LogTrace("Completed pipeline step {StepName} (Order {StepOrder}) in {Elapsed} ms",
-                                step.Name, order, sw.ElapsedMilliseconds);
+                            Logger?.LogTrace(MessageStepExecutionEnd, step.Name, order, sw.ElapsedMilliseconds);
                         }
                         else
                         {
-                            _logger?.LogInformation("Pipeline short-circuited by step {StepName} (Order {StepOrder}) after {Elapsed} ms",
-                                step.Name, order, sw.ElapsedMilliseconds);
+                            Logger?.LogInformation(MessageStepShortCircuited, step.Name, order, sw.ElapsedMilliseconds);
                         }
 
                         activity?.SetShortCircuited(!wasCalled);
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not OperationCanceledException and not PipelineExecutionException<TContext>)
                     {
                         _diagnostics.ReportException(ex, step, order);
-                        _logger?.LogError(ex, "Exception in pipeline step {StepName} (Order {StepOrder})", step.Name, order);
+                        Logger?.LogError(ex, MessageStepExecutionException, step.Name, order);
 
-                        if (ex is PipelineExecutionException<T>) throw;
-
-                        throw new PipelineExecutionException<T>(step.Name, order, ex);
+                        throw new PipelineExecutionException<TContext>(step.Name, order, ex);
                     }
                 }
             };
         }
 
+        Logger?.LogDebug(MessagePipelineExecutionStart, GetType().Name);
         await next(context, cancellationToken);
+        Logger?.LogDebug(MessagePipelineExecutionEnd, GetType().Name);
+    }
+}
+
+[ExcludeFromCodeCoverage]
+public class PipelineRunner<TContext> : PipelineRunner<TContext, IPipelineStep<TContext>>, IPipelineRunner<TContext>
+    where TContext : class
+{
+    public PipelineRunner(IServiceProvider serviceProvider)
+        : base(serviceProvider)
+    {
     }
 }

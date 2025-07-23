@@ -1,12 +1,15 @@
 using System.Reflection;
+using PipeForge.Extensions;
 
 namespace PipeForge.Metadata;
 
 /// <summary>
 /// Represents metadata extracted from a pipeline step implementation and its associated attribute
 /// </summary>
-public sealed class PipelineStepDescriptor
+internal sealed class PipelineStepDescriptor
 {
+    public static readonly string InvalidOperationExceptionMessage = $"Pipeline step '{{0}}' must be decorated with attribute {nameof(PipelineStepAttribute)}.";
+
     /// <summary>
     /// The concrete type that implements the pipeline step
     /// </summary>
@@ -20,7 +23,7 @@ public sealed class PipelineStepDescriptor
     /// <summary>
     /// An optional step filter, such as "Production" or "Development"
     /// </summary>
-    public string? Filter { get; }
+    public IEnumerable<string> Filters { get; }
 
     /// <summary>
     /// Creates a descriptor from the pipeline step type and extracts its metadata from the PipelineStepAttribute
@@ -32,9 +35,9 @@ public sealed class PipelineStepDescriptor
         ImplementationType = implementationType;
 
         var attribute = implementationType.GetCustomAttribute<PipelineStepAttribute>()
-            ?? throw new InvalidOperationException($"Pipeline step '{implementationType.FullName}' must be decorated with [PipelineStep].");
+            ?? throw new InvalidOperationException(string.Format(InvalidOperationExceptionMessage, implementationType.GetTypeName()));
 
         Order = attribute.Order;
-        Filter = attribute.Filter;
+        Filters = attribute.Filters;
     }
 }
