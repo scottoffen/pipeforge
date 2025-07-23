@@ -20,7 +20,7 @@ public class PipelineBuilder<TContext>
     /// <returns></returns>
     public IPipelineRunner<TContext> Build()
     {
-        //return new PipelineRunner<TContext>(_services.BuildServiceProvider());
+        return new PipelineRunner<TContext>(_services.BuildServiceProvider());
         throw new NotImplementedException();
     }
 

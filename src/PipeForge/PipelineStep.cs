@@ -1,10 +1,10 @@
-
 using System.Diagnostics.CodeAnalysis;
 
 namespace PipeForge;
 
 [ExcludeFromCodeCoverage]
-public abstract class PipelineStep<T> : IPipelineStep<T>
+public abstract class PipelineStep<TContext> : IPipelineStep<TContext>
+    where TContext : class
 {
     public string? Description { get; set; } = null;
 
@@ -14,5 +14,5 @@ public abstract class PipelineStep<T> : IPipelineStep<T>
 
     public string? ShortCircuitCondition { get; set; } = null;
 
-    public abstract Task InvokeAsync(T context, PipelineDelegate<T> next, CancellationToken cancellationToken = default);
+    public abstract Task InvokeAsync(TContext context, PipelineDelegate<TContext> next, CancellationToken cancellationToken = default);
 }

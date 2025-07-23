@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace PipeForge.Adapters.Json;
 
 [ExcludeFromCodeCoverage]
-internal class NewtonsoftJsonSerializer : IJsonSerializer
+internal sealed class NewtonsoftJsonSerializer : IJsonSerializer
 {
     private static readonly NewtonsoftJsonSerializer _instance = new();
 

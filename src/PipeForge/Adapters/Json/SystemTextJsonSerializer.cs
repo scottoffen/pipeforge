@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace PipeForge.Adapters.Json;
 
 [ExcludeFromCodeCoverage]
-internal class SystemTextJsonSerializer : IJsonSerializer
+internal sealed class SystemTextJsonSerializer : IJsonSerializer
 {
     private static readonly SystemTextJsonSerializer _instance = new();
 

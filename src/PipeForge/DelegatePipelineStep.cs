@@ -5,6 +5,7 @@ namespace PipeForge;
 /// </summary>
 /// <typeparam name="TContext">The type of the pipeline context.</typeparam>
 internal sealed class DelegatePipelineStep<TContext> : PipelineStep<TContext>
+    where TContext : class
 {
     private readonly Func<TContext, PipelineDelegate<TContext>, CancellationToken, Task> _invoke;
 
