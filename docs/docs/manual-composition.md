@@ -1,89 +1,103 @@
 ---
-sidebar_position: 7
+sidebar_position: 6
 title: Manual Composition
 ---
 
-# Manual Composition
+PipeForge is designed to integrate seamlessly with dependency injection, but it's flexible enough to support manual composition. This is useful in testing scenarios, minimal environments, or when you need complete control over how the pipeline is configured and executed.
 
-PipeForge is designed to integrate seamlessly with dependency injection, but it's flexible enough to support manual composition. This can be useful in testing scenarios, minimal environments, or when you need full control over pipeline configuration.
-
-The main drawbacks of this approach are that you'll be responsible for manually instantiating all dependencies for each step, and the resulting pipeline may not accurately reflect the behavior of your production configuration.
+One tradeoff with this approach is that it bypasses automatic step discovery and attribute-based filtering. As a result, you'll need to manage step order and registration logic explicitly, which may lead to inconsistencies if your production pipeline uses assembly scanning.
 
 ## Creating a Pipeline
 
-Manual pipeline composition is straightforward using the fluent API exposed by `PipelineBuilder<T>`, which is returned from the static method `Pipeline.CreateFor<T>()`. You can optionally pass an `ILoggerFactory` to enable logging during execution by the resulting `PipelineRunner<T>`.
+Manual composition is handled through the fluent API exposed by `PipelineBuilder<TContext>`, which you can create via:
 
-Add steps to the pipeline in the desired execution order using the fluent, chainable methods:
+```csharp
+var builder = Pipeline.CreateFor<SampleContext>();
+```
 
-- `Add<TStep>()` - for steps with a parameterless constructor
-- `AddStep<TStep>(Func<TStep> factory)` - for steps that require constructor parameters
+Steps are added in the desired execution order using the following chainable methods:
 
-```csharp title="Steps Used"
-private abstract class TestStep : PipelineStep<SampleContext>
+| Method                                                                          | Description                                                 |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `WithStep<TStep>()`                                                             | Registers a class that implements `IPipelineStep<TContext>` |
+| `WithStep(Func<TContext, PipelineDelegate<TContext>, CancellationToken, Task>)` | Registers an inline delegate step                           |
+
+If your steps have dependencies, you can register them using `ConfigureServices(Action<IServiceCollection> configure)`. This allows you to take full advantage of constructor injection even in a manually composed pipeline, using a lightweight internal service container managed by the builder.
+
+### Example
+
+The following example demonstrates how to manually build and execute a pipeline using a mix of class-based and inline delegate steps. It also shows how to register services required by steps through the builder's internal service container. Class definitions for the steps and services appear below.
+
+```csharp
+var builder = Pipeline.CreateFor<SampleContext>();
+
+builder.ConfigureServices(services =>
 {
-    public override async Task InvokeAsync(
-        SampleContext context,
-        PipelineDelegate<SampleContext> next,
-        CancellationToken cancellationToken = default)
+    services.AddSingleton<IMyDependency, MyDependency>();
+});
+
+builder.WithStep<StepA>()
+       .WithStep<StepB>()
+       .WithStep((context, next, cancellationToken) =>
+       {
+           context.AddStep("InlineStep");
+           return next(context, cancellationToken);
+       });
+
+var runner = builder.Build();
+
+var context = new SampleContext();
+await runner.ExecuteAsync(context);
+
+Console.WriteLine(context); // Outputs step history
+
+
+public interface IMyDependency
+{
+    void DoSomething();
+}
+
+public class MyDependency : IMyDependency
+{
+    public void DoSomething() => Console.WriteLine("Dependency invoked");
+}
+
+public class StepA : PipelineStep<SampleContext>
+{
+    private readonly IMyDependency _dependency;
+
+    public StepA(IMyDependency dependency)
     {
+        _dependency = dependency;
+        Name = "StepA";
+    }
+
+    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
+    {
+        _dependency.DoSomething();
         context.AddStep(Name);
         await next(context, cancellationToken);
     }
 }
 
-private class StepA : TestStep
+public class StepB : PipelineStep<SampleContext>
 {
-    public StepA() => Name = "A";
-}
+    public StepB()
+    {
+        Name = "StepB";
+    }
 
-private class StepB : TestStep
-{
-    public StepB() => Name = "B";
-}
-
-private class StepC : TestStep
-{
-    public StepC() => Name = "C";
-}
-
-private class StepD : TestStep
-{
-    public StepD(string name) => Name = name;
+    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
+    {
+        context.AddStep(Name);
+        await next(context, cancellationToken);
+    }
 }
 ```
 
-Note that `StepD` lacks a parameterless constructor, which means it can't be added using `Add<TStep>()`. Instead, you'll need to use `AddStep<TStep>(Func<TStep>)` to manually supply its dependencies - for example, if the step requires a configuration value, a logger, or a service instance.
+This example shows how to compose a simple pipeline with both concrete and delegate-based steps, and then execute it manually.
 
-```csharp title="Manual Pipeline Setup"
-var stepName = "Hello";
-var pipeline = Pipeline.CreateFor<SampleContext>()
-    .WithStep<StepA>()
-    .WithStep<StepB>()
-    .WithStep<StepC>()
-    .WithStep(() => new StepD(stepName))
-    .Build();
 
-var context = new SampleContext();
-await pipeline.ExecuteAsync(context);
-
-Console.WriteLine(context);
-// Should be:
-// A,B,C,Hello
-```
-
-## Advanced Scenarios
-
-In more advanced scenarios, the factory delegate can create a scope and resolve dependencies from the scoped service provider before constructing the step. This is especially useful when the step relies on services with scoped lifetimes, such as per-request context or transient infrastructure components. For example:
-
-```
-builder.WithStep(() =>
-{
-    using var scope = serviceProvider.CreateScope();
-    var scopedProvider = scope.ServiceProvider;
-    var name = scopedProvider.GetRequiredService<IOptions<MySettings>>().Value.Name;
-    return new StepD(name);
-});
-```
 
 ## Conclusion
 

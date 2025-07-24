@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 8
 title: Describing Pipelines
 ---
 
@@ -13,11 +13,13 @@ This method is useful for diagnostics, tooling, and dynamically displaying pipel
 
 The JSON output contains an array of objects, each representing a pipeline step with the following fields:
 
-* `Order`: The zero-based order in which the step appears in the pipeline
-* `Name`: The value of the step's `Name` property
-* `Description`: The step's `Description`, if defined
-* `MayShortCircuit`: A boolean indicating whether the step might short-circuit execution
-* `ShortCircuitCondition`: The value of the step's `ShortCircuitCondition`, if any
+| Field                   | Description                                                         |
+| ----------------------- | ------------------------------------------------------------------- |
+| `Order`                 | The zero-based order in which the step appears in the pipeline      |
+| `Name`                  | The value of the step's `Name` property                             |
+| `Description`           | The step's `Description`, if defined                                |
+| `MayShortCircuit`       | A boolean indicating whether the step might short-circuit execution |
+| `ShortCircuitCondition` | The value of the step's `ShortCircuitCondition`, if any             |
 
 Example output:
 
@@ -40,7 +42,7 @@ Example output:
 ]
 ```
 
-:::warning Warning
+:::info A Note About Order
 
 The `Order` value in the JSON output represents the execution order of the steps. This value is assigned based on the order in which the steps will be executed, and it may differ from the `Order` specified in each step's `PipelineStep` attribute.
 
