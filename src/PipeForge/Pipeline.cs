@@ -16,7 +16,7 @@ public static class Pipeline
     /// </remarks>
     /// <typeparam name="TContext"></typeparam>
     /// <returns></returns>
-    public static PipelineBuilder<TContext> CreateFor<TContext>(ILoggerFactory? loggerFactory = null)
+    public static PipelineBuilder<TContext> CreateFor<TContext>()
         where TContext : class
     {
         var contextType = typeof(TContext);
