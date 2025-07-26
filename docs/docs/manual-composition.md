@@ -96,9 +96,3 @@ public class StepB : PipelineStep<SampleContext>
 ```
 
 This example shows how to compose a simple pipeline with both concrete and delegate-based steps, and then execute it manually.
-
-
-
-## Conclusion
-
-Manual composition allows you to build and run a pipeline without relying on a DI container. While this approach is less common for production use, it provides maximum control for configuration, **testing** and minimal-host scenarios.

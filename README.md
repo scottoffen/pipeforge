@@ -25,10 +25,11 @@ PipeForge is available on [NuGet.org](https://www.nuget.org/packages/PipeForge/)
 
 ## Use Cases
 
-While PipeForge is fundamentally a pipeline framework, it can also serve as the foundation for higher-level workflows. These workflows are built by composing individual pipeline steps that handle branching, retries, fallbacks, and decision logic — making it ideal for orchestrating complex processes like AI chains, data enrichment, or multi-stage validation.
+While PipeForge is fundamentally a pipeline framework, it can also serve as the foundation for higher-level workflows. These workflows are built by composing individual pipeline steps that handle branching, retries, fallbacks, and decision logic - making it ideal for orchestrating complex processes like AI chains, data enrichment, or multi-stage validation.
 
 | | |
 |-|-|
+| Game Loop and Simulation Ticks | Model turn-based or tick-based game logic using structured steps for input handling, state updates, AI, and rule enforcement. Ideal for simulations, server-side logic, or deterministic turn resolution. |
 | Middleware-Style Request Processing | Build lightweight, modular request pipelines similar to ASP.NET middleware, without requiring a full web host. |
 | DevOps and Automation Pipelines | Express deployment checks, file transforms, and system hooks as repeatable, testable steps. |
 | Security and Auditing Pipelines | Enforce policies, redact sensitive data, and log events in a structured, traceable flow. |

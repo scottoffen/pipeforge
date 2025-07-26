@@ -110,7 +110,7 @@ internal static class PipelineRegistration
             return true;
         }
 
-        // 4. No implementation found, and the default is not valid — throw
+        // 4. Throw an exception when no implementation found, and the default is not valid
         logger?.LogWarning(MessageRunnerImplementationNotFound, runnerType.GetTypeName());
         throw new InvalidOperationException(string.Format(MessageRunnerImplementationNotFound, runnerType.GetTypeName()));
     }

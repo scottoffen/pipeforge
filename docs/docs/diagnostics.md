@@ -43,7 +43,3 @@ listener.Subscribe(new Observer((name, payload) =>
 * You can use this mechanism to generate timing metrics, debug issues, or visualize step execution.
 * Diagnostic events are low-overhead and safe to leave enabled in production.
 * Combine this with the `Describe()` method for a full picture of pipeline structure and execution behavior.
-
-## Conclusion
-
-PipeForge diagnostics give you deep visibility into pipeline execution with minimal effort. Whether you're debugging a failing step or building runtime instrumentation, the diagnostics hooks are ready to help.

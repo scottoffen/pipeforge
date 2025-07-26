@@ -68,6 +68,14 @@ services.AddPipeline<SampleContext, ISampleContextStep>(
 
 If you prefer to manually register individual steps, or want fine-grained control over registration, use the `AddPipelineStep` extension method.
 
+:::danger[Warning]
+
+When registering steps individually:
+- The `PipelineStep` attribute on the step is neither required nor used.
+- No pipeline runner is registered. You will need to register it yourself.
+
+:::
+
 ### Method Signature
 
 ```csharp
@@ -87,8 +95,4 @@ public static IServiceCollection AddPipelineStep<TStep, TStepInterface>(
 | `TStepInterface` | The interface used to register the step. Defaults to `IPipelineStep<TContext>` if not provided. | ❌        |
 | `lifetime`       | The DI lifetime for the step. Defaults to `ServiceLifetime.Transient`.                          | ❌        |
 
-### Notes
-
-* The `PipelineStep` attribute is not required or used when registering steps with this method.
-* No pipeline runner is registered when using `AddPipelineStep`.
-* If `TStepInterface` is not provided, the method will attempt to infer the context type from `TStep`.
+If `TStepInterface` is not provided, the method will attempt to infer the context type from `TStep`.

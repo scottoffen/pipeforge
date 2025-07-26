@@ -3,11 +3,11 @@ sidebar_position: 2
 title: Pipeline Steps
 ---
 
-Pipeline steps are the building blocks of a PipeForge pipeline. Each step performs a discrete unit of work and passes control to the next step in the sequence. Steps operate on a shared context object - a strongly typed class that carries data and state throughout the pipeline.
+Pipeline steps are the building blocks of a PipeForge pipeline. Each step performs a discrete unit of work and passes control to the next step in the sequence. Steps operate on a shared **context** object - a strongly typed class that carries data and state throughout the pipeline.
 
 PipeForge treats each step as an independent, discoverable component. You write them as plain classes, define their order and optional filters via attributes, and rely on constructor injection to bring in any needed services.
 
-Each step must implement one method and may optionally define four metadata properties:
+Each step must implement `IPipelineStep<TContext>`, which consists of one method and four metadata properties:
 
 | Member                       | Type     | Description                                                                                    |
 | --------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
@@ -27,7 +27,23 @@ Pipeline steps are just regular classes. You can inject dependencies into their 
 
 While you can implement `IPipelineStep<TContext>` directly, the recommended approach is to derive from the `PipelineStep<TContext>` base class. This abstract class provides default implementations for the optional metadata properties (`Name`, `Description`, etc.), allowing you to override only what you need.
 
-You can optionally assign metadata values in the constructor or directly in the property initializers.
+```csharp title="PipeForge.PipelineStep.cs"
+public abstract class PipelineStep<TContext> : IPipelineStep<TContext>
+    where TContext : class
+{
+    public virtual string? Description { get; set; } = null;
+
+    public virtual bool MayShortCircuit { get; set; }
+
+    public virtual string Name { get; set; } = string.Empty;
+
+    public virtual string? ShortCircuitCondition { get; set; } = null;
+
+    public abstract Task InvokeAsync(TContext context, PipelineDelegate<TContext> next, CancellationToken cancellationToken = default);
+}
+```
+
+When extending this class, you can optionally assign metadata values in the constructor or directly in the property initializers.
 
 ```csharp title="AddToContextStep.cs"
 public class AddToContextStep : PipelineStep<SampleContext>
@@ -45,7 +61,7 @@ public class AddToContextStep : PipelineStep<SampleContext>
 }
 ```
 
-Using the base class keeps your steps clean and focused, while making metadata easier to inspect during debugging or runtime diagnostics, and steps easier to test and debug.
+Using a base class keeps your steps clean and focused, makes metadata easy to inspect at runtime, and improves testability. If you prefer, you can always define your own base class.
 
 ## Short Circuiting Execution
 
@@ -114,7 +130,7 @@ public class Step1 : PipelineStep<SampleContext>
 
 :::
 
-### Adding a Step Filter
+### Optional Step Filters
 
 You can limit when a pipeline step is registered by adding one or more filter values to the [PipelineStep] attribute. Filters allow you to exclude steps from registration unless a matching filter is explicitly provided during discovery.
 
@@ -141,14 +157,14 @@ public class Step2 : PipelineStep<SampleContext>
 :::danger[Caution]
 
 - Steps **without** a `Filter` parameter will always be registered during the step discovery and registration process. 
-- Steps **with** `Filter` parameter will only be registered if the same value is passed to the [registration extension method](./step-discovery.md).
+- Steps **with** `Filter` parameter will only be registered if a matching filter is passed to the [registration extension method](./pipeline-registration.md).
 
 :::
 
 
 ## Creating Custom Step Interfaces
 
-When building multiple pipelines (especially for the same context), it can be helpful to define a custom step interface for each one. This allows you to isolate steps to a specific pipeline, organize your code more clearly, and register only the relevant steps using dependency injection.
+When building multiple pipelines (especially for the same context), it can be helpful to define a custom step interface for each one. This allows you to isolate steps to a specific pipeline, organize your code more clearly, and register and resolve only the relevant steps using dependency injection.
 
 To do this, you create a new interface that inherits from `IPipelineStep<TContext>` and use it as the marker type for step registration and execution.
 
@@ -177,13 +193,15 @@ public class SampleContextStepA : PipelineStep<SampleContext>, ISampleContextSte
 }
 ```
 
+:::tip[I'm still extending `PipelineStep<T>`]
+
+Extending `PipelineStep<T>` is optional, but helpful - it lets you avoid implementing the entire interface manually. Pipeline discovery and registration will still work even if you inherit from a different base class or none at all.
+
+:::
+
 When registering or resolving the pipeline, we'll use the custom interface as the step type. This pattern helps:
 - Prevent cross-contamination between unrelated pipelines
 - Simplify discovery and debugging
 - Maintain clear architectural boundaries
 
-You can reuse the same `SampleContext` type across different pipelines if needed - just define separate step interfaces to control which steps apply to each one.
-
-## Conclusion
-
-Now that you've defined your pipeline steps, the next step is to discover and register them.
+You can reuse the same `SampleContext` type across different pipelines if needed - just define separate step interfaces to control which steps apply to each one, and then use the appropriate [registration extension method](./pipeline-registration.md).

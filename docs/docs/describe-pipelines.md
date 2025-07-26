@@ -3,25 +3,29 @@ sidebar_position: 8
 title: Describing Pipelines
 ---
 
-# Describing Pipelines
+PipeForge provides built-in support for inspecting pipeline structure and behavior at runtime. This is especially useful for observability, testing, documentation, and UI tooling.
 
-The `Describe()` method on `IPipelineRunner<T>` is used to inspect and document the pipeline configuration at runtime. It returns a JSON string describing each registered pipeline step.
+## Describe()
 
-This method is useful for diagnostics, tooling, and dynamically displaying pipeline behavior in user interfaces or logs - but only if you've taken the time to add the necessary metadata to your step classes.
+The `Describe()` method on `IPipelineRunner<T>` outputs a JSON array representing each registered step. It includes key metadata such as name, order, and short-circuit configuration.
 
-## Output Format
+:::warning[Side Effects]
 
-The JSON output contains an array of objects, each representing a pipeline step with the following fields:
+This method **instantiates all steps**, triggering constructor injection and service resolution. Use it only when such side effects are acceptable.
 
-| Field                   | Description                                                         |
-| ----------------------- | ------------------------------------------------------------------- |
-| `Order`                 | The zero-based order in which the step appears in the pipeline      |
-| `Name`                  | The value of the step's `Name` property                             |
-| `Description`           | The step's `Description`, if defined                                |
-| `MayShortCircuit`       | A boolean indicating whether the step might short-circuit execution |
-| `ShortCircuitCondition` | The value of the step's `ShortCircuitCondition`, if any             |
+:::
 
-Example output:
+### Output Format
+
+| Field                   | Description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| `Order`                 | Step's position in the execution sequence               |
+| `Name`                  | Value of the step’s `Name` property                     |
+| `Description`           | Value of the step’s `Description`, if provided          |
+| `MayShortCircuit`       | Indicates if the step may halt pipeline execution       |
+| `ShortCircuitCondition` | Explanation of the short-circuit trigger, if applicable |
+
+### Example Output
 
 ```json
 [
@@ -42,26 +46,59 @@ Example output:
 ]
 ```
 
-:::info A Note About Order
+:::info[A Note About Order]
 
-The `Order` value in the JSON output represents the execution order of the steps. This value is assigned based on the order in which the steps will be executed, and it may differ from the `Order` specified in each step's `PipelineStep` attribute.
-
-For example, if you have only two steps with `PipelineStep(Order = 3)` and `PipelineStep(Order = 4)`, the JSON output will show `Order` values of `0` and `1`, respectively - reflecting their relative execution sequence, not their original attribute values.
+The `Order` shown in the output reflects the **actual runtime execution sequence**, not the numeric value assigned via the `[PipelineStep]` attribute. For example, two steps with attributes `Order = 3` and `Order = 4` will appear in the output as `Order = 0` and `Order = 1` if they are the only steps registered.
 
 :::
 
-## Instantiation Behavior
-
-Calling `Describe()` **will instantiate all steps** in the pipeline by accessing their `Lazy<T>` wrappers. This may result in constructor injection or other side effects associated with instantiating the step class. Use this method only when you are prepared for that overhead.
-
-## Use Cases
+### Use Cases
 
 * Logging pipeline structure for observability
-* Generating runtime documentation or UI
-* Verifying step order and metadata during tests or builds
+* Generating runtime or admin UI documentation
+* Verifying step order and metadata in unit tests
 
-If you need to inspect step configuration without triggering instantiation, consider maintaining parallel metadata or restricting usage of `Describe()` to controlled environments.
+If you need to inspect step configuration without triggering instantiation, consider capturing step metadata during registration or design time.
 
-## Conclusion
+## DescribeSchema()
 
-Use `Describe()` to introspect your pipeline at runtime, but be aware that it will force full resolution of every registered step.
+The `DescribeSchema()` method returns a [JSON Schema v7](https://json-schema.org/specification.html) document that describes the metadata shape of a pipeline step. This is ideal for tools that visualize or validate pipeline structures.
+
+### When to Use
+
+* Exposing step definitions through APIs or dashboards
+* Powering UI editors or metadata-driven configuration
+* Documenting expected step shape for developers
+* Validating configuration or orchestration input
+
+### Schema Fields
+
+| Property                | Type    | Description                                         |
+| ----------------------- | ------- | --------------------------------------------------- |
+| `Order`                 | integer | Execution order of the step (inferred at runtime)   |
+| `Name`                  | string  | Display name of the step                            |
+| `Description`           | string  | Optional summary of the step’s purpose              |
+| `MayShortCircuit`       | boolean | Indicates if the step may halt execution early      |
+| `ShortCircuitCondition` | string  | Optional explanation of the short-circuit condition |
+
+Only `Order` is required. All other fields are optional and serve documentation, inspection, or visualization purposes.
+
+### Example Output
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PipelineStep",
+  "type": "object",
+  "properties": {
+    "Order": { "type": "integer", "description": "Execution order of the step (inferred)" },
+    "Name": { "type": "string", "description": "Display name of the step" },
+    "Description": { "type": "string", "description": "Optional description of the step" },
+    "MayShortCircuit": { "type": "boolean", "description": "Whether the step may halt pipeline execution early" },
+    "ShortCircuitCondition": { "type": "string", "description": "Explanation of the short-circuit condition, if any" }
+  },
+  "required": ["Order"]
+}
+```
+
+Use this schema to build validation layers, generate dynamic forms, or publish step definitions in API documentation.

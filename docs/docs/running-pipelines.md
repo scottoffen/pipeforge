@@ -78,7 +78,3 @@ await runner.ExecuteAsync(first);
 var second = new SampleContext();
 await runner.ExecuteAsync(second);
 ```
-
-## Conclusion
-
-Your pipeline is now fully operational. In the next section, you'll learn how to test pipelines and steps independently.
