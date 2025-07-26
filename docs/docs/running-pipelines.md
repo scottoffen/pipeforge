@@ -1,21 +1,25 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 title: Running Pipelines
 ---
 
-# Running Pipelines
+Each runner executes the steps associated with a specific context type, in the order they were registered. If you registered steps individually, execution order follows registration order. If you used pipeline discovery, step order is determined by the `[PipelineStep]` attribute.
 
-Once your pipeline steps are discovered and registered, you can run the pipeline by resolving and invoking an `IPipelineRunner<T>` from the dependency injection container.
+Once your pipeline has been registered, you can execute it by resolving a suitable `IPipelineRunner` from the dependency injection container. The type of runner you resolve depends on how the pipeline was registered:
 
-Each `IPipelineRunner<T>` executes the pipeline steps for a specific context type `T`, in the order defined by their `[PipelineStep]` attribute.
+| Registration Method                       | Runner to Resolve                           |
+| ----------------------------------------- | ------------------------------------------- |
+| Registered with default step interface    | `IPipelineRunner<TContext>`                 |
+| Registered with custom step interface     | `IPipelineRunner<TContext, TStepInterface>` |
+| Registered with a custom runner interface | e.g. `ISampleContextRunner`                 |
 
 ## Example Usage
 
 ```csharp title="Executing a Pipeline"
 [PipelineStep(1)]
-public class StepA : PipelineStep<StepContext>
+public class StepA : PipelineStep<SampleContext>
 {
-    public override async Task InvokeAsync(StepContext context, PipelineDelegate<StepContext> next, CancellationToken cancellationToken = default)
+    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
     {
         context.AddStep("A1");
         await next(context, cancellationToken);
@@ -23,9 +27,9 @@ public class StepA : PipelineStep<StepContext>
 }
 
 [PipelineStep(2)]
-public class StepB : PipelineStep<StepContext>
+public class StepB : PipelineStep<SampleContext>
 {
-    public override async Task InvokeAsync(StepContext context, PipelineDelegate<StepContext> next, CancellationToken cancellationToken = default)
+    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
     {
         context.AddStep("B2");
         await next(context, cancellationToken);
@@ -33,22 +37,22 @@ public class StepB : PipelineStep<StepContext>
 }
 
 [PipelineStep(3)]
-public class StepC : PipelineStep<StepContext>
+public class StepC : PipelineStep<SampleContext>
 {
-    public override async Task InvokeAsync(StepContext context, PipelineDelegate<StepContext> next, CancellationToken cancellationToken = default)
+    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
     {
         context.AddStep("C3");
         await next(context, cancellationToken);
     }
 }
 
-var context = new SampleContext();
 var services = new ServiceCollection();
-services.AddPipelineFor<SampleContext>();
+services.AddPipeline<SampleContext>();
 
 var provider = services.BuildServiceProvider();
 var runner = provider.GetRequiredService<IPipelineRunner<SampleContext>>();
 
+var context = new SampleContext();
 await runner.ExecuteAsync(context);
 
 Console.WriteLine(context.ToString()); // e.g. "A1,B2,C3"
@@ -61,11 +65,11 @@ Each registered pipeline step for `SampleContext` will be executed in order, unl
 - The pipeline is lazily instantiated. Only the steps needed for the current run will be resolved from the container.
 - If a step short-circuits (by not calling `next()`), remaining steps will **not** be resolved or executed.
 - Exceptions thrown in any step will bubble up unless explicitly handled inside the step.
-- Unhandled exceptions during pipeline execution will be wrapped in a `PipelineExecutionException<T>`, which preserves the original exception as an inner exception.
+- Unhandled exceptions during pipeline execution will be wrapped in a `PipelineExecutionException<TContext>`, which preserves the original exception as an inner exception.
 
 ## Stateless Runners
 
-Pipeline runners are stateless and safe to reuse. You can execute the same runner multiple times with different contexts:
+Pipeline runners are stateless and safe to reuse. Steps are resolved fresh from the container for each run, to honor service lifetime. You can execute the same runner multiple times with different contexts:
 
 ```csharp
 var first = new SampleContext();
@@ -74,7 +78,3 @@ await runner.ExecuteAsync(first);
 var second = new SampleContext();
 await runner.ExecuteAsync(second);
 ```
-
-## Conclusion
-
-Your pipeline is now fully operational. In the next section, you'll learn how to test pipelines and steps independently.

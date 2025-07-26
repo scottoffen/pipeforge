@@ -13,107 +13,7 @@ PipeForge is a lightweight, composable pipeline framework for .NET. It makes ste
 
 PipeForge is available on [NuGet.org](https://www.nuget.org/packages/PipeForge/) and can be installed using a NuGet package manager or the .NET CLI.
 
-## Usage
-
-Pipelines are designed to operate on specific class, referred to as the **context**. Multiple pipeline steps are created in code to operate on that context. Steps are annotated with an attribute indicating the order in which they should be executed. Finally, the pipeline runner is given an instance of the context to run against.
-
-The following example uses dependency injection, and is the recommended approach to using PipeForge. For more advanced scenarios, see the full [documentation](https://scottoffen.github.io/pipeforge).
-
-> [!NOTE]
-> I'm suffixing my context class with the word `Context`, and my steps with the word `Step` for demonstration purposes only.
-
-### Create Your Context
-
-```csharp
-public class SampleContext
-{
-    private readonly List<string> _steps = new();
-
-    public void AddStep(string stepName)
-    {
-        if (string.IsNullOrWhiteSpace(stepName))
-        {
-            throw new ArgumentException("Step name cannot be null or whitespace.", nameof(stepName));
-        }
-
-        _steps.Add(stepName);
-    }
-
-    public int StepCount => _steps.Count;
-
-    public override string ToString()
-    {
-        return string.Join("", _steps);
-    }
-}
-```
-
-### Create Your Steps
-
-```csharp
-[PipelineStep(1)]
-public class HelloStep : PipelineStep<SampleContext>
-{
-    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
-    {
-        context.AddStep("Hello");
-        await next(context, cancellationToken);
-    }
-}
-
-[PipelineStep(2)]
-public class WorldStep : PipelineStep<SampleContext>
-{
-    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
-    {
-        context.AddStep("World");
-        await next(context, cancellationToken);
-    }
-}
-
-[PipelineStep(3)]
-public class PunctuationStep : PipelineStep<SampleContext>
-{
-    public override async Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
-    {
-        context.AddStep("1");
-        await next(context, cancellationToken);
-    }
-}
-```
-
-### Use Dependency Injection
-
-The extension method will discover and register all steps for the given `T` context, as well as register an instance of `IPipelineRunner<T>` that can be injected into services.
-
-```csharp
-services.AddPipelineFor<SampleContext>();
-```
-
-### Execute Pipeline
-
-Get an instance of `IPipelineRunnere<SampleContext>` from your dependency injection container.
-
-```csharp
-public class SampleService
-{
-    private readonly IPipelineRunner<SampleContext> _pipelineRunner;
-
-    public SampleService(IPipelineRunner<SampleContext> pipelineRunner)
-    {
-        _pipelineRunner = pipelineRunner;
-    }
-
-    public async Task RunPipeline(SampleContext context, CancellationToken? token = default)
-    {
-        await _pipelineRunner.ExecuteAsync(context, token);
-        var result = context.ToString();
-        // result = "HelloWorld!"
-    }
-}
-```
-
-## Support
+## Usage and Support
 
 - Check out the project documentation https://scottoffen.github.io/pipeforge.
 
@@ -122,6 +22,21 @@ public class SampleService
 - Have a question you can't find an answer for in the documentation or discussions? You can ask your questions on [StackOverflow](https://stackoverflow.com) using [#pipeforge](https://stackoverflow.com/questions/tagged/pipeforge?sort=newest). Make sure you include the version of PipeForge you are using, the platform you using it on, code samples and any specific error messages you are seeing.
 
 - **Issues created to ask "how to" questions will be closed.**
+
+## Use Cases
+
+While PipeForge is fundamentally a pipeline framework, it can also serve as the foundation for higher-level workflows. These workflows are built by composing individual pipeline steps that handle branching, retries, fallbacks, and decision logic - making it ideal for orchestrating complex processes like AI chains, data enrichment, or multi-stage validation.
+
+| | |
+|-|-|
+| Game Loop and Simulation Ticks | Model turn-based or tick-based game logic using structured steps for input handling, state updates, AI, and rule enforcement. Ideal for simulations, server-side logic, or deterministic turn resolution. |
+| Middleware-Style Request Processing | Build lightweight, modular request pipelines similar to ASP.NET middleware, without requiring a full web host. |
+| DevOps and Automation Pipelines | Express deployment checks, file transforms, and system hooks as repeatable, testable steps. |
+| Security and Auditing Pipelines | Enforce policies, redact sensitive data, and log events in a structured, traceable flow. |
+| ETL and Data Processing Pipelines | Break down validation, transformation, and persistence into clean, maintainable processing steps. |
+| LLM and AI Workflows | Orchestrate prompt generation, model calls, fallback handling, and response parsing using composable pipelines. |
+| Business Logic and Domain Orchestration | Replace brittle `if` chains and nested logic with clearly structured rule execution and orchestration flows. |
+
 
 ## Contributing
 

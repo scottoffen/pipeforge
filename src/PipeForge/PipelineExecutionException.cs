@@ -5,9 +5,9 @@ namespace PipeForge;
 /// <summary>
 /// Represents an exception thrown during the execution of a pipeline step for the specified context type
 /// </summary>
-/// <typeparam name="T">The type of context used in the pipeline</typeparam>
+/// <typeparam name="TContext">The type of context used in the pipeline</typeparam>
 [DebuggerDisplay("StepName = {StepName}, StepOrder = {StepOrder}, Message = {Message}")]
-public class PipelineExecutionException<T> : Exception
+public class PipelineExecutionException<TContext> : Exception
 {
     /// <summary>
     /// The name of the step where the exception occurred
@@ -46,6 +46,6 @@ public class PipelineExecutionException<T> : Exception
 
         Data["PipelineStepName"] = stepName;
         Data["PipelineStepOrder"] = stepOrder;
-        Data["PipelineContextType"] = typeof(T).FullName;
+        Data["PipelineContextType"] = typeof(TContext).FullName;
     }
 }

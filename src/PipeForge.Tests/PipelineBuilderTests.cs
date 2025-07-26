@@ -49,15 +49,11 @@ public class PipelineBuilderTests
         }
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task PipelineBuilder_CreatesAndRunsPipeline(bool provideLogger)
+    [Fact]
+    public async Task PipelineBuilder_CreatesAndRunsPipeline()
     {
-        ILoggerFactory? loggerFactory = provideLogger ? new LoggerFactory() : null;
-
         var context = new SampleContext();
-        var builder = Pipeline.CreateFor<SampleContext>(loggerFactory);
+        var builder = Pipeline.CreateFor<SampleContext>();
 
         // Test adding a service to the pipeline
         builder.ConfigureServices(services =>

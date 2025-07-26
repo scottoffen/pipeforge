@@ -40,9 +40,10 @@ public class PipelineBuilder<TContext>
     /// </summary>
     /// <typeparam name="TStep"></typeparam>
     /// <returns></returns>
-    public PipelineBuilder<TContext> WithStep<TStep>() where TStep : class, IPipelineStep<TContext>
+    public PipelineBuilder<TContext> WithStep<TStep>(ServiceLifetime lifetime = ServiceLifetime.Transient)
+        where TStep : class, IPipelineStep<TContext>
     {
-        _services.AddPipelineStep<TStep>();
+        _services.AddPipelineStep<TStep>(lifetime);
         return this;
     }
 

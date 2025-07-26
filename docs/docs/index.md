@@ -1,15 +1,15 @@
 ---
-sidebar_position: 1
+sidebar_position: 0
 title: Getting Started
 ---
 
 # Welcome to PipeForge
 
-PipeForge is a lightweight, composable, lazy-instantiation pipeline framework for .NET. It simplifies step-based processing while remaining discoverable and testable. Inspired by middleware pipelines and modern dependency injection patterns, PipeForge gives you structured control over sequential logic flows - without the ceremony.
+PipeForge is a lightweight, composable pipeline framework for .NET that makes step-based workflows easy to build, test, and maintain. With lazy instantiation and modern dependency injection, it gives you structured control over execution flow - without the heavy scaffolding of base classes, rigid lifecycles, or tightly coupled framework logic. Inspired by the simplicity of middleware pipelines, PipeForge favors clear, minimal structure over hidden complexity.
 
-Pipelines operate on a specific class known as the **context**. Each pipeline step is a discrete unit of work, written in code and annotated with metadata indicating its order and (optional) filter. These steps are lazily instantiated and executed in sequence by the pipeline runner.
+Each pipeline operates on a specific class called the **context**, which flows through each step in sequence. Steps are discrete units of work, written as regular code and annotated with metadata to define their order and optional filters. They’re lazily instantiated - only created when needed - and executed by the pipeline runner.
 
-At any point, the pipeline can **short-circuit**, halting execution - and preventing the instantiation of any remaining steps.
+At any point, a step can **short-circuit** the pipeline, halting further execution and preventing the instantiation of remaining steps.
 
 ## Sample Context
 
@@ -18,7 +18,7 @@ For the purposes of this documentation, the following sample context will be use
 ```csharp title="SampleContext.cs"
 public class SampleContext
 {
-    private readonly List<string> _steps = new();
+    public readonly List<string> Steps = new();
 
     public void AddStep(string stepName)
     {
@@ -27,22 +27,22 @@ public class SampleContext
             throw new ArgumentException("Step name cannot be null or whitespace.", nameof(stepName));
         }
 
-        _steps.Add(stepName);
+        Steps.Add(stepName);
     }
 
-    public int StepCount => _steps.Count;
+    public int StepCount => Steps.Count;
 
     public override string ToString()
     {
-        return string.Join(",", _steps);
+        return string.Join(",", Steps);
     }
 }
 ```
 
 This context allows us to:
 - Track pipeline progress via `AddStep()`
+- Evaluate the order and number of step executions
 - Print step execution history using `ToString()`
-- Assert how many steps ran using `StepCount`
 - Simulate errors by passing null or empty step names
 
 ## Installation

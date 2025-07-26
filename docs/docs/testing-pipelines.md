@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
 title: Testing Pipelines
 ---
 
@@ -71,54 +71,10 @@ public class ShortCircuitTest
 
 ## Testing the Full Pipeline
 
-You can test the full pipeline by registering steps with a service provider and using `IPipelineRunner<T>`. This is especially useful for verifying composition, ordering, and side effects.
-
-```csharp title="PipelineIntegrationTest.cs"
-public class PipelineIntegrationTest
-{
-    private class StepA : PipelineStep<SampleContext>
-    {
-        public StepA() => Name = "A";
-
-        public override Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
-        {
-            context.AddStep(Name);
-            return next(context, cancellationToken);
-        }
-    }
-
-    private class StepB : PipelineStep<SampleContext>
-    {
-        public StepB() => Name = "B";
-
-        public override Task InvokeAsync(SampleContext context, PipelineDelegate<SampleContext> next, CancellationToken cancellationToken = default)
-        {
-            context.AddStep(Name);
-            return next(context, cancellationToken);
-        }
-    }
-
-    [Fact]
-    public async Task PipelineExecutesStepsInOrder()
-    {
-        var services = new ServiceCollection();
-        services.AddPipelineStep<StepA>();
-        services.AddPipelineStep<StepB>();
-        services.AddTransient<IPipelineRunner<SampleContext>, PipelineRunner<SampleContext>>();
-
-        var provider = services.BuildServiceProvider();
-        var runner = provider.GetRequiredService<IPipelineRunner<SampleContext>>();
-
-        var context = new SampleContext();
-        await runner.ExecuteAsync(context);
-
-        Assert.Equal("A,B", context.ToString());
-    }
-}
-```
+You can test the full pipeline using [`PipelineBuilder<TContext>`](./manual-composition.md).
 
 ## Summary
 
 * Steps are just regular classes and can be tested independently.
 * You control the `next` delegate to test full, partial, or short-circuited runs.
-* The DI container can be configured in tests to simulate realistic pipeline composition.
+* Use `PipelineBuilder<TContext>` simulate realistic pipeline composition.
