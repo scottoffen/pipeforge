@@ -34,14 +34,12 @@ public interface IPipelineRunner<TContext, TStepInterface>
 /// <summary>
 /// Represents a pipeline runner for a specific context type, using <see cref="IPipelineStep{TContext}"/> as the step interface.
 /// </summary>
-/// <typeparam name="TContext">
+/// <typeparam name="TContexts">
 /// The type of the context that is passed to each pipeline step.
 /// </typeparam>
 /// <remarks>
 /// This interface simplifies registration and resolution when a custom step interface is not needed.
 /// </remarks>
-public interface IPipelineRunner<TContext> : IPipelineRunner<TContext, IPipelineStep<TContext>>
-    where TContext : class
+public interface IPipelineRunner<TContexts> : IPipelineRunner<TContexts, IPipelineStep<TContexts>>
+    where TContexts : class
 { }
-
-
