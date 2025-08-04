@@ -13,6 +13,8 @@ internal static class PipelineRegistration
     internal static readonly string MessageNoStepsFound = "No pipeline steps found for {0} in the specified assemblies.";
     internal static readonly string MessageNumberStepsFound = "Discovered and registered {0} pipeline steps for {1}.";
     internal static readonly string MessageRunnerAlreadyRegistered = "Pipeline runner for {0} already registered. Skipping step registration.";
+    internal static readonly string MessageRunnerDynamicCodeNotSupported = "Dynamic code generation is not supported on this runtime.";
+    internal static readonly string MessageRunnerFailedDynamicCreation = "Failed to create dynamic pipeline runner for {0}.";
     internal static readonly string MessageRunnerImplementationNotFound = "No concrete implementation found for pipeline runner interface '{0}'. If you are using a custom runner interface, you must also provide an implementation for it.";
     internal static readonly string MessageRunnerRegistration = "Registering pipeline runner implementation {0} for interface {1} with {2} lifetime";
     internal static readonly string MessageStepAlreadyRegistered = "Pipeline step '{0}' is already registered. Pipeline steps must be uniquely registered.";
@@ -110,9 +112,33 @@ internal static class PipelineRegistration
             return true;
         }
 
+#if NET5_0_OR_GREATER
+        // 4. Attempt to create a dynamic runner using the factory.
+        try
+        {
+            if (!System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported)
+                throw new PlatformNotSupportedException(MessageRunnerDynamicCodeNotSupported);
+
+            var proxy = PipelineRunnerFactory.CreatePipelineRunner<TContext, TStepInterface, TRunnerInterface>();
+            logger?.LogDebug(MessageRunnerRegistration, proxy.GetTypeName(), runnerType.GetTypeName(), lifetime.ToString());
+            services.TryAdd(ServiceDescriptor.Describe(runnerType, proxy, lifetime));
+            return true;
+        }
+        catch (PlatformNotSupportedException ex)
+        {
+            logger?.LogError(ex, MessageRunnerDynamicCodeNotSupported, runnerType.GetTypeName());
+            throw;
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, MessageRunnerFailedDynamicCreation, runnerType.GetTypeName());
+            throw;
+        }
+#else
         // 4. Throw an exception when no implementation found, and the default is not valid
         logger?.LogWarning(MessageRunnerImplementationNotFound, runnerType.GetTypeName());
         throw new InvalidOperationException(string.Format(MessageRunnerImplementationNotFound, runnerType.GetTypeName()));
+#endif
     }
 
     public static void RegisterStep(
