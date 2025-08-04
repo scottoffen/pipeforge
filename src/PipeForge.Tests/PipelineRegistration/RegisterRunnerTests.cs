@@ -93,7 +93,7 @@ public class RegisterRunnerTests
 
         result.ShouldBeFalse();
     }
-
+#if NETSTANDARD2_0
     [Fact]
     public void RegisterRunner_Throws_WhenNoRunnerImplementationFound()
     {
@@ -110,4 +110,28 @@ public class RegisterRunnerTests
 
         ex.Message.ShouldBe(string.Format(PipeForge.PipelineRegistration.MessageRunnerImplementationNotFound, runnerTypeName));
     }
+#else
+    [Fact]
+    public void RegisterRunner_GeneratesRunner_WhenNoRunnerImplementationFound()
+    {
+        var runnerTypeName = typeof(INotImplementedRunner).FullName ?? typeof(INotImplementedRunner).Name;
+        var services = new ServiceCollection();
+
+        services.RegisterRunner<SampleContext, ISampleContextStep, INotImplementedRunner>(Assemblies, ServiceLifetime.Transient, null);
+
+        var provider = services.BuildServiceProvider();
+        var runner = provider.GetService<INotImplementedRunner>();
+
+        runner.ShouldNotBeNull();
+        var type = runner.GetType();
+
+        type.ShouldNotBeNull();
+        type.IsAbstract.ShouldBeFalse();
+        type.IsInterface.ShouldBeFalse();
+        type.IsGenericType.ShouldBeFalse();
+
+        typeof(INotImplementedRunner).IsAssignableFrom(type).ShouldBeTrue();
+        typeof(PipelineRunner<SampleContext, ISampleContextStep>).IsAssignableFrom(type).ShouldBeTrue();
+    }
+#endif
 }
