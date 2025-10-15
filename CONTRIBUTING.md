@@ -4,7 +4,7 @@ Community feedback is used to inform the direction of the project, and we absolu
 
 # How To Get Help
 
-A lot of issues that were created in previous versions of PipeForge were not bugs or feature requests, they were questions or discussions - most of which could be (and were) answered by anyone in the community; they're not exclusive to the maintainers. For feedback like this, there are several places where people can get all kinds of help, and we would encourage you to use them first.
+Issues are often created that are not bugs or feature requests, but rather questions or discussions - many of which could be answered by anyone in the community; they're not exclusive to the maintainers. For feedback like this, there are several places where people can get all kinds of help, and we would encourage you to use them first.
 
 - Consult the [official documentation](https://scottoffen.github.io/PipeForge).
 - Engage in our [community discussions](https://github.com/scottoffen/PipeForge/discussions).
@@ -72,4 +72,4 @@ Sometimes, your editor may completely reformat a file when you save it, making n
 
 # Documentation Changes
 
-Having excellent documentation is crucial to the success of PipeForge. Documentation for PipeForge is written using [Docusaurus](https://docusaurus.io/), lives in [docs folder](./docs/). Your contribution of clear, concise and accurate documentation is appreciated.
+Having excellent documentation is crucial to the success of PipeForge. Documentation for PipeForge is written using [Docusaurus](https://docusaurus.io/), and lives in [docs folder](./docs/). Your contribution of clear, concise and accurate documentation is appreciated.
