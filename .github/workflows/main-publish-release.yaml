@@ -117,7 +117,7 @@ jobs:
 
     # Builds the project using the Release configuration without restoring dependencies
     - name: Build Release
-      run: dotnet build ./src/PipeForge --no-restore --configuration Release --output ./publish
+      run: dotnet build ./src/PipeForge --no-restore --configuration Release -p:PackageOutputPath=$PWD/publish
 
     # Output the github.event.inputs values
     - name: Display Inputs

@@ -134,7 +134,7 @@ jobs:
 
     # Builds the project using the Release configuration without restoring dependencies
     - name: Build
-      run: dotnet build ./src/PipeForge --no-restore --configuration Release --output ./publish
+      run: dotnet build ./src/PipeForge --no-restore --configuration Release -p:PackageOutputPath=$PWD/publish
 
     # Publishes the package to GitHub Packages
     - name: Publish to GitHub Packages
