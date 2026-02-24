@@ -1,8 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace PipeForge;
+
 
 [ExcludeFromCodeCoverage]
 public static class AddPipelineExtensions
