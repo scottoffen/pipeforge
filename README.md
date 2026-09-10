@@ -5,7 +5,7 @@
 [![MIT](https://img.shields.io/github/license/scottoffen/pipeforge?color=blue)](./LICENSE)
 [![Target1](https://img.shields.io/badge/netstandard-2.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/frameworks)
 [![Target1](https://img.shields.io/badge/dotnet-5.0-blue)](https://learn.microsoft.com/en-us/dotnet/standard/frameworks)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-blue.svg)](code_of_conduct.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-blue.svg)](./github/code_of_conduct.md)
 
 PipeForge is a lightweight, composable pipeline framework for .NET. It makes step-based processing simple, discoverable, and testable. Inspired by middleware pipelines and modern dependency injection patterns, PipeForge gives you structured control over sequential logic flows - without the ceremony.
 
@@ -40,7 +40,7 @@ While PipeForge is fundamentally a pipeline framework, it can also serve as the 
 
 ## Contributing
 
-We welcome contributions from the community! In order to ensure the best experience for everyone, before creating an issue or submitting a pull request, please see the [contributing guidelines](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md). Failure to adhere to these guidelines can result in significant delays in getting your contributions included in the project.
+We welcome contributions from the community! In order to ensure the best experience for everyone, before creating an issue or submitting a pull request, please see the [contributing guidelines](.github/contributing.md) and the [code of conduct](.github/code_of_conduct.md). Failure to adhere to these guidelines can result in significant delays in getting your contributions included in the project.
 
 ## Versioning
 
